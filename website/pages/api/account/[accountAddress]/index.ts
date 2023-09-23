@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { buildMockAccountSummary, buildMockTribeSummary } from "../../../../lib/api/utils";
 import { buildValueReferences } from "../../../../lib/shared/utils";
-import { AccountDetail, AccountSummary } from "../../../../types/types";
+import { AccountDetail, AccountSummary, SocialStorySummary } from "../../../../types/types";
 
 // TODO: validation with zod
 type RequestData = {
@@ -58,7 +58,8 @@ export default function getTribeDetail(
 
   const values = buildValueReferences("Web3, Decentralization, LOVE, Environment", null);
   const tribeSummary1 = buildMockTribeSummary(1, "0x283af0b28c62c092c9727f1ee09c02ca627eb7f5", "Tribe 1", "0xd8da6bf26964af9d7eed9e03e53415d37aa96045", 123, values);
-  const accountSummary = buildMockAccountSummary("0x1a199654959140e5c1a2f4135faa7ba2748939c5", tribeSummary1, values);
+  const curatedSocial: SocialStorySummary[] = []
+  const accountSummary = buildMockAccountSummary("0x1a199654959140e5c1a2f4135faa7ba2748939c5", tribeSummary1, curatedSocial, values);
 
   let account: AccountSummary | AccountDetail;
   
