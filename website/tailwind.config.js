@@ -8,9 +8,23 @@ module.exports = {
     // Or if using `src` directory:
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  theme: ["dark"],
+  theme: ["socialsignal"],
   plugins: [require("daisyui")],
   daisyui: {
-    themes: ["dark"],
+    themes: [
+      {
+        socialsignal: {
+          primary: "#059669",
+          secondary: "#bae6fd",
+          accent: "#be123c",
+          neutral: "#2a323c",
+          "base-100": "#1d232a",
+          info: "#3abff8",
+          success: "#36d399",
+          warning: "#fbbd23",
+          error: "#f87272",
+        },
+      },
+    ],
   },
 };

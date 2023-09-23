@@ -1,6 +1,6 @@
 "use client";
 import type { NextPage } from "next";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   useInitWeb3InboxClient,
   useManageSubscription,
@@ -19,11 +19,16 @@ import { useInterval } from "usehooks-ts";
 import { sendNotification } from "../utils/fetchNotify";
 // import Subscribers from "../components/Subscribers";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
 const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN as string;
 
 const Home: NextPage = () => {
+  const router = useRouter();
+
   /** Web3Inbox SDK hooks **/
   const isW3iInitialized = useInitWeb3InboxClient({
     projectId,
@@ -147,103 +152,143 @@ const Home: NextPage = () => {
     handleBlockNotification();
   }, 12000);
 
+  const [isClosing, setIsClosing] = useState(false);
+  const introAudioRef = useRef<HTMLAudioElement>();
+
+  useEffect(() => {
+    try {
+      var audio = new Audio("/sfx/intro2.mp3");
+      audio.volume = 1;
+      audio.play();
+      introAudioRef.current = audio;
+    } catch (e) {}
+  }, []);
+
   return (
-    <div className="w-full flex flex-col max-w-[700px]">
-      <img
-        aria-label="WalletConnect"
-        src={
-          // colorMode === "dark"
-          true ? "/WalletConnect-white.svg" : "/WalletConnect-black.svg"
-        }
-      />
+    <motion.div
+      className="opacity-0"
+      initial="visible"
+      animate={isClosing ? "hidden" : "visible"}
+      variants={{
+        visible: {
+          opacity: 100,
+          transition: { ease: "easeOut", duration: 0.85, delay: 2.3 },
+        },
+        hidden: {
+          opacity: 0,
+          transition: { ease: "easeIn", duration: 0.5, delay: 0 },
+        },
+      }}
+    >
+      <div className="flex flex-col min-w-[540px] max-w-[940px] bg-[#fefefe] px-8 py-10 rounded-xl">
+        <h1 className="text-3xl font-bold underline text-red-500">
+          <Link
+            href="/tribes/create"
+            onClick={(e) => {
+              setIsClosing(true);
 
-      <h1 className="text-3xl font-bold underline text-red-500">
-        <a href="/tribes/create">Create tribe!</a>
-      </h1>
-      <h1 className="text-3xl font-bold underline">
-        <a href="/tribes">See your tribes</a>
-      </h1>
+              try {
+                if (introAudioRef.current) introAudioRef.current.pause();
 
-      <h3 className="self-center text-center mb-6">Web3Inbox hooks</h3>
+                var audio = new Audio("/sfx/create-tribe.mp3");
+                audio.volume = 1;
+                audio.play();
+                e.preventDefault();
 
-      <div className="flex flex-col gap-4">
-        {isSubscribed ? (
-          <div className="flex flex-col gap-4 items-center">
-            <button
-              // leftIcon={<BsSendFill />}
-              // variant="outline"
-              onClick={handleTestNotification}
-              disabled={!isW3iInitialized}
-              // colorScheme="purple"
-              // rounded="full"
-              // isLoading={isSending}
-              // loadingText="Sending..."
-            >
-              Send test notification
-            </button>
-            <button
-              // leftIcon={isBlockNotificationEnabled ? <FaPause /> : <FaPlay />}
-              // variant="outline"
-              onClick={() =>
-                setIsBlockNotificationEnabled((isEnabled) => !isEnabled)
-              }
-              disabled={!isW3iInitialized}
-              // colorScheme={isBlockNotificationEnabled ? "orange" : "blue"}
-              // rounded="full"
-            >
-              {isBlockNotificationEnabled ? "Pause" : "Resume"} block
-              notifications
-            </button>
-            <button
-              // leftIcon={<FaBellSlash />}
-              onClick={unsubscribe}
-              // variant="outline"
-              disabled={!isW3iInitialized || !account}
-              // colorScheme="red"
-              // isLoading={isUnsubscribing}
-              // loadingText="Unsubscribing..."
-              // rounded="full"
-            >
-              Unsubscribe
-            </button>
-          </div>
-        ) : (
-          // <Tooltip
-          //   label={
-          //     !Boolean(address)
-          //       ? "Connect your wallet first."
-          //       : "Register your account."
-          //   }
-          //   hidden={Boolean(account)}
-          // >
-          <button
-            // leftIcon={<FaBell />}
-            onClick={subscribe}
-            // colorScheme="cyan"
-            // rounded="full"
-            // variant="outline"
-            // w="fit-content"
-            // alignSelf="center"
-            // isLoading={isSubscribing}
-            // loadingText="Subscribing..."
-            disabled={!Boolean(address) || !Boolean(account)}
+                setTimeout(() => {
+                  router.push("/tribes/create");
+                }, 1200);
+              } catch (e) {}
+            }}
           >
-            Subscribe
-          </button>
-          // </Tooltip>
-        )}
+            Create tribe!
+          </Link>
+        </h1>
+        <h1 className="text-3xl font-bold underline">
+          <a href="/tribes">See your tribes</a>
+        </h1>
 
-        {isSubscribed && (
-          // <Accordion defaultIndex={[1]} allowToggle mt={10} rounded="xl">
-          <div className="mt-10">
-            {/* <Subscription />
+        <h3 className="self-center text-center mb-6">Web3Inbox hooks</h3>
+
+        <div className="flex flex-col gap-4">
+          {isSubscribed ? (
+            <div className="flex flex-col gap-4 items-center">
+              <button
+                // leftIcon={<BsSendFill />}
+                // variant="outline"
+                onClick={handleTestNotification}
+                disabled={!isW3iInitialized}
+                // colorScheme="purple"
+                // rounded="full"
+                // isLoading={isSending}
+                // loadingText="Sending..."
+              >
+                Send test notification
+              </button>
+              <button
+                // leftIcon={isBlockNotificationEnabled ? <FaPause /> : <FaPlay />}
+                // variant="outline"
+                onClick={() =>
+                  setIsBlockNotificationEnabled((isEnabled) => !isEnabled)
+                }
+                disabled={!isW3iInitialized}
+                // colorScheme={isBlockNotificationEnabled ? "orange" : "blue"}
+                // rounded="full"
+              >
+                {isBlockNotificationEnabled ? "Pause" : "Resume"} block
+                notifications
+              </button>
+              <button
+                // leftIcon={<FaBellSlash />}
+                onClick={unsubscribe}
+                // variant="outline"
+                disabled={!isW3iInitialized || !account}
+                // colorScheme="red"
+                // isLoading={isUnsubscribing}
+                // loadingText="Unsubscribing..."
+                // rounded="full"
+              >
+                Unsubscribe
+              </button>
+            </div>
+          ) : (
+            // <Tooltip
+            //   label={
+            //     !Boolean(address)
+            //       ? "Connect your wallet first."
+            //       : "Register your account."
+            //   }
+            //   hidden={Boolean(account)}
+            // >
+            <button
+              // leftIcon={<FaBell />}
+              onClick={subscribe}
+              // colorScheme="cyan"
+              // rounded="full"
+              // variant="outline"
+              // w="fit-content"
+              // alignSelf="center"
+              // isLoading={isSubscribing}
+              // loadingText="Subscribing..."
+              disabled={!Boolean(address) || !Boolean(account)}
+            >
+              Subscribe
+            </button>
+            // </Tooltip>
+          )}
+
+          {isSubscribed && (
+            // <Accordion defaultIndex={[1]} allowToggle mt={10} rounded="xl">
+            <div className="mt-10">
+              {/* <Subscription />
             <Messages />
             <Preferences />
             <Subscribers /> */}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
