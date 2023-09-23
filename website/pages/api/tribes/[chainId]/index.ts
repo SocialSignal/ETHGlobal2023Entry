@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const metadata = await (
-    await fetch(`https://${req.query.id}.ipfs.w3s.link/metadata.json`)
+    await fetch(`https://${req.query.chainId}.ipfs.w3s.link/metadata.json`)
   ).json();
 
   return res.json({
