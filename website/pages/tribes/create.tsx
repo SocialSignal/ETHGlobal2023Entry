@@ -12,6 +12,8 @@ export default () => {
   const [isActionInProgress, setIsActionInProgress] = useState(false);
   const [name, setName] = useState<string>();
   const [description, setDescription] = useState<string>();
+  const [ensName, setENSName] = useState<string>();
+  const [tribeValues, setTribeValues] = useState<string>();
   const [largeAvatar, setLargeAvatar] = useState<File>();
   const [smallAvatar, setSmallAvatar] = useState<File>();
   const lastAudioRef = useRef<HTMLAudioElement>();
@@ -108,6 +110,31 @@ export default () => {
           placeholder="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+        />
+      </div>
+
+      <div className="form-control w-full max-w-xs">
+        <label className="label">
+          <span className="label-text text-black">ENS name</span>
+        </label>
+        <input
+          type="text"
+          placeholder="ENS name"
+          className="textarea textarea-primary w-full"
+          value={ensName}
+          onChange={(e) => setENSName(e.target.value)}
+        />
+      </div>
+
+      <div className="form-control w-full max-w-xs">
+        <label className="label">
+          <span className="label-text text-black">Declare your values</span>
+        </label>
+        <textarea
+          className="textarea textarea-primary w-full"
+          placeholder="tribe values"
+          value={tribeValues}
+          onChange={(e) => setTribeValues(e.target.value)}
         />
       </div>
 

@@ -77,7 +77,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const tmpPath = `${uuidv4()}.json`;
       writeFileSync(tmpPath, JSON.stringify(contractMetadata));
       const contractMetadataCID = await pinFiles([tmpPath], ["metadata.json"]);
-      return res.redirect(302, `/tribes/${contractMetadataCID}`);
+
+      // Kevin: Joao creates contract here.
+      const deployedContractAddress = await createTribe(...);
+      return res.json({ deployedContractAddress });
     } catch (e) {
       console.error(e);
       return res
