@@ -168,6 +168,9 @@ const Home: NextPage = () => {
             : "/WalletConnect-black.svg"
         }
       />
+
+      <h1 className="text-3xl font-bold underline text-red-500">Hello world!</h1>
+
       <Heading alignSelf={"center"} textAlign={"center"} mb={6}>
         Web3Inbox hooks
       </Heading>
