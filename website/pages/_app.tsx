@@ -10,14 +10,10 @@ import Navbar from "../components/core/Navbar";
 import "../styles/globals.css";
 import { Toaster } from "react-hot-toast";
 
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-} from "react-query";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { SkeletonTheme } from "react-loading-skeleton";
+import { useState } from "react";
+import ConnectTakeover from "../components/ConnectTakeover";
 
 // 1. Get projectID at https://cloud.walletconnect.com
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
@@ -38,34 +34,40 @@ createWeb3Modal({ wagmiConfig, projectId, chains });
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const [isConnected, setIsConnected] = useState(false);
+
   return (
     <QueryClientProvider client={queryClient}>
       <SkeletonTheme baseColor="#202020" highlightColor="#444">
-        <div>
-          <Toaster />
-        </div>
+        <Toaster />
         <WagmiConfig config={wagmiConfig}>
-          <div
-            className="w-full flex flex-col"
-            // templateAreas={`"header" "main" "footer"`}
-            // w="100%"
-            // width="100%"
-            // gridTemplateRows={"100px 3f 40px"}
-            // gridTemplateColumns={"1fr"}
-            // paddingY="2em"
-          >
-            <div className="p-4">
-              <Navbar />
+          {!isConnected ? (
+            <ConnectTakeover onConnect={() => setIsConnected(true)} />
+          ) : (
+            <div
+              className="w-full flex flex-col"
+              // templateAreas={`"header" "main" "footer"`}
+              // w="100%"
+              // width="100%"
+              // gridTemplateRows={"100px 3f 40px"}
+              // gridTemplateColumns={"1fr"}
+              // paddingY="2em"
+            >
+              <>
+                <div>
+                  <Navbar />
+                </div>
+                <div className="p-10 z-10">
+                  <div className="flex flex-col justify-center items-center">
+                    <Component {...pageProps} />
+                  </div>
+                </div>
+                <div className="z-10">
+                  <Footer />
+                </div>
+              </>
             </div>
-            <div className="p-10">
-              <div className="flex flex-col justify-center items-center">
-                <Component {...pageProps} />
-              </div>
-            </div>
-            <div>
-              <Footer />
-            </div>
-          </div>
+          )}
         </WagmiConfig>
       </SkeletonTheme>
     </QueryClientProvider>
