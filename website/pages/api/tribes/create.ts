@@ -86,8 +86,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const owner = "0x9b613116064f04796336221a01ba7b134c062567";
       const ensName = "settlers";
 
-      await createTribe(chainId, nftName, nftSymbol, owner, baseURI, ensName);
-      return res.redirect(302, `/tribes/${contractMetadataCID}`);
+      const txHash = await createTribe(chainId, nftName, nftSymbol, owner, baseURI, ensName);
+      return res.json({ txHash });
     } catch (e) {
       console.error(e);
       return res
