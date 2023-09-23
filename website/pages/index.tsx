@@ -167,7 +167,7 @@ const Home: NextPage = () => {
   return (
     <motion.div
       className="opacity-0"
-      initial="visible"
+      initial="hidden"
       animate={isClosing ? "hidden" : "visible"}
       variants={{
         visible: {
