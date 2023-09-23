@@ -5,13 +5,25 @@ import { toastError } from "../../components/Notifications";
 import { sfxAtom } from "../../components/core/Navbar";
 import { useAtom } from "jotai";
 
+const networkOptions = [
+  "gnosis",
+  "arbitrum",
+  "scroll",
+  "base",
+  "mantle",
+  "celo",
+  "linea",
+  "neonevm",
+  "polygon",
+];
+
 export default () => {
   const router = useRouter();
   const [audioEnabled] = useAtom(sfxAtom);
 
   const [isActionInProgress, setIsActionInProgress] = useState(false);
   const [name, setName] = useState<string>();
-  const [chainId, setChaind] = useState<number>(5);
+  const [network, setNetwork] = useState<string>();
   const [description, setDescription] = useState<string>();
   const [ensName, setENSName] = useState<string>();
   const [tribeValues, setTribeValues] = useState<string>();
@@ -26,6 +38,15 @@ export default () => {
       return;
     } else if (!name?.trim().length) {
       toastError(audioEnabled, "Name is required");
+      return;
+    } else if (!network?.trim().length) {
+      toastError(audioEnabled, "Network is required");
+      return;
+    } else if (!ensName?.trim().length) {
+      toastError(audioEnabled, "ensName is required");
+      return;
+    } else if (!tribeValues?.trim().length) {
+      toastError(audioEnabled, "Tribe values are required");
       return;
     }
 
@@ -45,7 +66,9 @@ export default () => {
       const data = new FormData();
       data.set("largeAvatar", largeAvatar);
       data.set("name", name);
-      data.set("chainId", chainId.toString());
+      data.set("network", network);
+      data.set("ensName", ensName);
+      data.set("tribeValues", tribeValues);
 
       if (description) data.set("description", description);
       if (smallAvatar) data.set("smallAvatar", smallAvatar);
@@ -166,6 +189,21 @@ export default () => {
           onChange={(e) => setSmallAvatar(e.target.files?.[0])}
         />
       </div>
+
+      <select
+        className="select select-bordered select-xs w-full max-w-xs"
+        value={network}
+        onChange={(e) => setNetwork(e.target.value)}
+      >
+        <option disabled selected>
+          Network
+        </option>
+        {networkOptions.map((x) => (
+          <option key={x} value={x}>
+            {x}
+          </option>
+        ))}
+      </select>
 
       {isActionInProgress ? (
         <button className="btn" disabled>
