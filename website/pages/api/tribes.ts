@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { ENSProfile, TribeReference, TribeSummary, ValueReference } from "../../types/types";
+import { TribeSummary } from "../../types/types";
+import { buildValueReferences } from "../../lib/shared/utils";
+import { buildMockTribeSummary } from "../../lib/api/utils";
 
 // TODO: validation with zod
 type RequestData = {
@@ -17,89 +19,6 @@ type ResponseData = {
    * Returns a list of 0 or more TribeSummary objects for each Tribe ever created.
    */
   tribes: TribeSummary[];
-}
-
-function buildMockTribeSummary(chainId: number, tribeAddress: string, displayName: string, owner: string, memberCount: number, values: ValueReference[]): TribeSummary {
-  const tribeId : TribeReference = {
-    chainId: chainId,
-    address: tribeAddress
-  };
-
-  const ensProfile : ENSProfile = {
-    values: values,
-    displayName: "Unknown " + tribeAddress.substring(0, 4),
-    avatar: `/address/${tribeAddress}/avatar`,
-    description: "We help companies by developing tailor-made blockchain solutions using top-notch technology.",
-    twitter: "Blockful_io",
-    email: "info@blockful.io",
-    website: "https://blockful.io",
-    github: "blockful-io",
-    telegram: "blockful_io"
-  };
-
-  return {
-    tribeId: tribeId,
-    displayName: displayName,
-    owner: owner,
-    avatar: `/tribes/${chainId}/${tribeAddress}/avatar`,
-    badge: `/tribes/${chainId}/${tribeAddress}/badge`,
-    memberCount: memberCount,
-    ensProfile: ensProfile
-  };
-}
-
-function buildValueReferences(rawValues: string, viewerValues: ValueReference[] | null): ValueReference[] {
-
-  let values: ValueReference[] = [];
-
-  rawValues.split(",").forEach((rawValue) => {
-
-    const displayValue = rawValue.trim();
-
-    // normalize by removing all whitespace and converting to lowercase
-    const normalizedValue = displayValue.replace(/\s+/g, '').toLowerCase();
-
-    // ignore any empty values
-    if (normalizedValue.length > 0) {
-
-      let sharedWithViewer : boolean;
-      if (!viewerValues) {
-        sharedWithViewer = false;
-      } else {
-        const matchingValue = viewerValues.find((viewerValue) => {
-          return viewerValue.normalizedValue === normalizedValue;
-        });
-
-        sharedWithViewer = matchingValue !== undefined;
-      }
-
-      if (values.find((value) => {
-        return value.normalizedValue === normalizedValue;
-      })) {
-        // ignore duplicate values
-      } else {
-        values.push({
-          displayValue: displayValue,
-          normalizedValue: normalizedValue,
-          sharedWithViewer: sharedWithViewer
-        });
-      }
-    }
-
-  });
-
-  // put the values in alphabetical order, with the values shared with the viewer first
-  return values.sort((a, b) => {
-    if (a.sharedWithViewer && b.sharedWithViewer) {
-      return a.normalizedValue.localeCompare(b.normalizedValue);
-    } else if (a.sharedWithViewer) {
-      return -1;
-    } else if (b.sharedWithViewer) {
-      return 1;
-    } else {
-      return a.normalizedValue.localeCompare(b.normalizedValue);
-    }
-  });
 }
 
 export default function getTribeList(
