@@ -191,7 +191,7 @@ export default () => {
       </div>
 
       <select
-        className="select select-bordered select-xs w-full max-w-xs"
+        className="select select-bordered select-xs w-full max-w-xs text-white"
         value={network}
         onChange={(e) => setNetwork(e.target.value)}
       >
