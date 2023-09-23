@@ -3,6 +3,7 @@ import { Web3Storage, getFilesFromPath } from "web3.storage";
 import formidable from "formidable-serverless";
 import { rmSync, writeFileSync } from "fs";
 import { v4 as uuidv4 } from "uuid";
+import { createTribe } from "../../../lib/createTribe";
 
 async function pinFiles(paths: string[], names: string[]) {
   const storage = new Web3Storage({ token: process.env.WEB3_STORAGE_API_KEY! });
@@ -77,6 +78,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const tmpPath = `${uuidv4()}.json`;
       writeFileSync(tmpPath, JSON.stringify(contractMetadata));
       const contractMetadataCID = await pinFiles([tmpPath], ["metadata.json"]);
+
+      const baseURI = `ipfs://${contractMetadataCID}/metadata.json`;
+      const chainId = 5; // Goerli
+      const nftName = "Settlers";
+      const nftSymbol = "SETTLERS";
+      const owner = "0x9b613116064f04796336221a01ba7b134c062567";
+      const ensName = "settlers";
+
+      await createTribe(chainId, nftName, nftSymbol, owner, baseURI, ensName);
       return res.redirect(302, `/tribes/${contractMetadataCID}`);
     } catch (e) {
       console.error(e);
