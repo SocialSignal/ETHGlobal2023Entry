@@ -103,8 +103,20 @@ export type ValueReference = {
     sharedWithViewer: boolean | null;
 };
 
+/*
+ * Defines the maximum number os SocialStorySummary values
+ * that will be provided at a time.
+ * 
+ * It is possible that many more SocialStorySummary values exist for an account
+ * than this number. In this case, the backend will curate the SocialStorySummary values returned
+ * where an attempt to guess the most relevant SocialStorySummary values to be returned.
+ */
+export const MAX_SOCIAL_STORY_SUMMARIES = 5;
 
-export enum SharedContextSource {
+/*
+ * Defines the possible sources of a SocialStorySummary.
+ */
+export enum SocialStorySource {
     Tribe = "tribe",
     Value = "value",
     Poap = "poap",
@@ -112,31 +124,31 @@ export enum SharedContextSource {
 };
 
 /*
- * Abstractly represents a single piece of data that is shared between two accounts.
+ * Abstractly represents the summary of a "socially relevent" attribute of an account.
  */
-export type SharedContext = {
+export type SocialStorySummary = {
 
     /*
-     * Identifies the source of the SharedContext.
+     * Identifies the source of the SocialStorySource.
      */
-    source: SharedContextSource;
+    source: SocialStorySource;
 
     /*
-     * A short description of a contextual data point
+     * A short description of the "socially relevant" attribute of the account.
      */
     description: string;
 
     /*
-     * URL to small badge image representing the `SharedContextSource` in our own backend.
+     * URL to small badge image representing the `SocialStorySource` in our own backend.
      * This image will NOT be the image of a specific NFT / POAP / etc..
      * 
-     * Url will always be in the format `/shared-context/{source}/badge`.
+     * Url will always be in the format `/social-story/{source}/badge`.
      * 
      */
     sourceBadge: string;
 
     /*
-     * Identifies if the `SharedContext` is also held by the “viewed-from” user account.
+     * Identifies if the `SocialStorySummary` is also held by the “viewed-from” user account.
      * null if and only if the provided “viewed-from” param is NOT defined in the API request.
      */
     sharedWithViewer: boolean | null;
@@ -286,9 +298,12 @@ export type AccountSummary = {
     metaProfile: MetaProfile;
 
     /*
-     * Array of 0 or more SharedContext values.
+     * Array of 0 to MAX_SOCIAL_STORY_SUMMARIES SocialStorySummary values.
+    * It is possible that many more SocialStorySummary values exist for an account
+    * than MAX_SOCIAL_STORY_SUMMARIES. In this case, the backend will curate the SocialStorySummary values returned
+    * where an attempt to guess the most relevant SocialStorySummary values to be returned.
      */
-    sharedContext: SharedContext[];
+    curatedSocialStories: SocialStorySummary[];
 
     /*
      * Identifies the primary Tribe of the Account.
