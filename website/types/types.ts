@@ -229,3 +229,45 @@ export type ENSProfile = {
      */
     telegram: string | null;
 };
+
+/*
+ * Attributes of an account that are sourced from Lens.
+ */
+export type LensProfile = {
+    
+    /*
+     * The name of an account on Lens.
+     * Assume this is just a handle to a Lens account, and not the full URL to a Lens profile.
+     */
+    lensName: string;
+};
+
+/*
+ * Attributes of an account that are sourced from Lens.
+ */
+export type XMTPProfile = {
+    
+    /*
+     * Identifies if an account has activated XMTP (and therefore can be contacted through XMTP).
+     */
+    activatedXMTP: boolean;
+};
+
+export type MetaProfile = {
+
+    /*
+     * Profile details of an account that are sourced from ENS.
+     */
+    ensProfile: ENSProfile;
+
+    /*
+     * Profile details of an account that are sourced from Lens.
+     * null if and only if the account is NOT registered on Lens.
+     */
+    lensProfile: LensProfile | null;
+
+    /*
+     * Profile details of an account that are sourced from XMTP.
+     */
+    xmtpProfile: XMTPProfile;
+};
