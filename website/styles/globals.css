@@ -18,6 +18,11 @@ body {
   background-size: cover;
 }
 
+/* .connect-gate-bg {
+  background-image: url("/gate_bg.jpg");
+  background-size: cover;
+} */
+
 .radial-bg {
   background: hsla(0, 0%, 11%, 1);
 

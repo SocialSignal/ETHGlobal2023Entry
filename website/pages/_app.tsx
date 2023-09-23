@@ -1,5 +1,5 @@
 import type { AppProps } from "next/app";
-import { WagmiConfig } from "wagmi";
+import { WagmiConfig, useAccount } from "wagmi";
 import { mainnet } from "wagmi/chains";
 import Footer from "../components/core/Footer";
 // import "@web3inbox/widget-react/dist/compiled.css";
@@ -12,8 +12,7 @@ import { Toaster } from "react-hot-toast";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { SkeletonTheme } from "react-loading-skeleton";
-import { useState } from "react";
-import ConnectTakeover from "../components/ConnectTakeover";
+import AuthWrapper from "../components/AuthWrapper";
 
 // 1. Get projectID at https://cloud.walletconnect.com
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
@@ -29,30 +28,28 @@ const wagmiConfig = defaultWagmiConfig({
   appName: "GM Hackers",
 });
 
-createWeb3Modal({ wagmiConfig, projectId, chains });
+createWeb3Modal({
+  wagmiConfig,
+  projectId,
+  chains,
+
+  // NOTE: The typings don't match reality.
+  themeVariables: {
+    "--w3m-font-family": "Roboto, sans-serif",
+    "--w3m-accent": "#56B5BF",
+  } as any,
+});
 
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [isConnected, setIsConnected] = useState(false);
-
   return (
     <QueryClientProvider client={queryClient}>
       <SkeletonTheme baseColor="#202020" highlightColor="#444">
         <Toaster />
         <WagmiConfig config={wagmiConfig}>
-          {!isConnected ? (
-            <ConnectTakeover onConnect={() => setIsConnected(true)} />
-          ) : (
-            <div
-              className="w-full flex flex-col"
-              // templateAreas={`"header" "main" "footer"`}
-              // w="100%"
-              // width="100%"
-              // gridTemplateRows={"100px 3f 40px"}
-              // gridTemplateColumns={"1fr"}
-              // paddingY="2em"
-            >
+          <AuthWrapper>
+            <div className="w-full flex flex-col">
               <>
                 <div>
                   <Navbar />
@@ -67,7 +64,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                 </div>
               </>
             </div>
-          )}
+          </AuthWrapper>
         </WagmiConfig>
       </SkeletonTheme>
     </QueryClientProvider>

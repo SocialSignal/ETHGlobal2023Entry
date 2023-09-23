@@ -74,7 +74,7 @@ function Navbar() {
             Mine
           </NavLink>
         </div>
-        {/* <w3m-button label="Connect Wallet" balance="show" /> */}
+        <w3m-button label="Connect Wallet" balance="show" />
       </div>
     </div>
   );
