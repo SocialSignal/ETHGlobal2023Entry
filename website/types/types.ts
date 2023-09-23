@@ -102,3 +102,42 @@ export type ValueReference = {
      */
     sharedWithViewer: boolean | null;
 };
+
+
+export enum SharedContextSource {
+    Tribe = "tribe",
+    Value = "value",
+    Poap = "poap",
+    Nft = "nft"
+};
+
+/*
+ * Abstractly represents a single piece of data that is shared between two accounts.
+ */
+export type SharedContext = {
+
+    /*
+     * Identifies the source of the SharedContext.
+     */
+    source: SharedContextSource;
+
+    /*
+     * A short description of a contextual data point
+     */
+    description: string;
+
+    /*
+     * URL to small badge image representing the `SharedContextSource` in our own backend.
+     * This image will NOT be the image of a specific NFT / POAP / etc..
+     * 
+     * Url will always be in the format `/shared-context/{source}/badge`.
+     * 
+     */
+    sourceBadge: string;
+
+    /*
+     * Identifies if the `SharedContext` is also held by the “viewed-from” user account.
+     * null if and only if the provided “viewed-from” param is NOT defined in the API request.
+     */
+    sharedWithViewer: boolean | null;
+};
