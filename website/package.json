@@ -15,6 +15,7 @@
     "@web3inbox/core": "^0.0.14",
     "@web3inbox/widget-react": "^0.6.18",
     "@web3modal/wagmi": "^3.0.0-beta.4",
+    "classnames": "^2.3.2",
     "formidable-serverless": "^1.1.1",
     "framer-motion": "^10.16.4",
     "lokijs": "^1.5.12",

@@ -1,5 +1,7 @@
 import React, { useMemo } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
+import classnames from "classnames";
 
 interface Props {
   children: React.ReactNode;
@@ -17,21 +19,16 @@ export const NavLink = (props: Props) => {
   // const hoverBg = useColorModeValue("gray.200", "gray.700");
 
   return (
-    <button
-      // variant="outline"
-      // as={Link}
-      // px={4}
-      // size="md"
-      // rounded={"full"}
-      // _hover={{
-      //   textDecoration: "none",
-      //   bg: hoverBg,
-      // }}
-      // href={href}
-      // isActive={isActive}
+    <Link
+      className={classnames(
+        "text-white hover:underline mx-2 w-[45px] block text-center",
+        {
+          "text-gray-200 font-bold": isActive,
+        }
+      )}
       {...props}
     >
       {children}
-    </button>
+    </Link>
   );
 };
