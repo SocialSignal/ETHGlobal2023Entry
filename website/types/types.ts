@@ -271,3 +271,30 @@ export type MetaProfile = {
      */
     xmtpProfile: XMTPProfile;
 };
+
+export type AccountSummary = {
+
+    /*
+     * The address of the Account.
+     * Contains a lowercase hex string beginning with "0x".
+     */
+    address: string;
+
+    /*
+     * The MetaProfile of the Account that is sourced from multiple services.
+     */
+    metaProfile: MetaProfile;
+
+    /*
+     * Array of 0 or more SharedContext values.
+     */
+    sharedContext: SharedContext[];
+
+    /*
+     * Identifies the primary Tribe of the Account.
+     * null if and only if:
+     *      1. the Account has NOT set a primary Tribe; OR
+     *      2. the primary Tribe set by the Account has not added this account as a member.
+     */
+    primaryTribe: TribeSummary | null;
+};
