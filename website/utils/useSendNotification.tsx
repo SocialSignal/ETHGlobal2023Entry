@@ -3,6 +3,7 @@ import { useW3iAccount } from "@web3inbox/widget-react";
 import { INotification } from "./types";
 import { sendNotification } from "./fetchNotify";
 import toast from "react-hot-toast";
+import { toastError } from "../components/Notifications";
 
 function useSendNotification() {
   const [isSending, setIsSending] = useState<boolean>(false);
@@ -24,7 +25,7 @@ function useSendNotification() {
         if (success) {
           toast.success(notification.title);
         } else {
-          toast.error("Message failed");
+          toastError("Message failed");
         }
         // toast({
         //   status: success ? "success" : "error",
@@ -36,7 +37,7 @@ function useSendNotification() {
       } catch (error: any) {
         setIsSending(false);
         console.error({ sendNotificationError: error });
-        toast.error(`${error.message}:${error.cause}`);
+        toastError(`${error.message}:${error.cause}`);
       }
     },
     [toast, account]

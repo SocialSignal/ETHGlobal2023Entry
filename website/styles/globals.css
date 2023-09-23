@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html,
+body {
+  background-color: #010101;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+.image_preview_container {
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, transparent 100%);
+}
+
+.image_preview {
+  background-image: url("/obelisk_banner.jpg");
+  background-size: cover;
+}
+
+.radial-bg {
+  background: hsla(0, 0%, 11%, 1);
+
+  background: radial-gradient(
+    circle,
+    hsla(0, 0%, 11%, 1) 0%,
+    hsla(0, 0%, 0%, 1) 100%
+  );
+
+  background: -moz-radial-gradient(
+    circle,
+    hsla(0, 0%, 11%, 1) 0%,
+    hsla(0, 0%, 0%, 1) 100%
+  );
+
+  background: -webkit-radial-gradient(
+    circle,
+    hsla(0, 0%, 11%, 1) 0%,
+    hsla(0, 0%, 0%, 1) 100%
+  );
+
+  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#1B1B1B", endColorstr="#010101", GradientType=1 );
+}

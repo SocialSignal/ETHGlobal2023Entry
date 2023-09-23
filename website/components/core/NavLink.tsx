@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 interface Props {
   children: React.ReactNode;
   href: string;
+  onClick?: () => void;
 }
 
 export const NavLink = (props: Props) => {
@@ -17,17 +18,18 @@ export const NavLink = (props: Props) => {
 
   return (
     <button
-    // variant="outline"
-    // as={Link}
-    // px={4}
-    // size="md"
-    // rounded={"full"}
-    // _hover={{
-    //   textDecoration: "none",
-    //   bg: hoverBg,
-    // }}
-    // href={href}
-    // isActive={isActive}
+      // variant="outline"
+      // as={Link}
+      // px={4}
+      // size="md"
+      // rounded={"full"}
+      // _hover={{
+      //   textDecoration: "none",
+      //   bg: hoverBg,
+      // }}
+      // href={href}
+      // isActive={isActive}
+      {...props}
     >
       {children}
     </button>
