@@ -1,7 +1,46 @@
+import { useRouter } from "next/router";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default () => {
+  const router = useRouter();
+
   const [isActionInProgress, setIsActionInProgress] = useState(false);
+  const [largeAvatar, setLargeAvatar] = useState<File>();
+  const [smallAvatar, setSmallAvatar] = useState<File>();
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!largeAvatar) {
+      toast.error("Large avatar is required");
+      return;
+    }
+
+    try {
+      setIsActionInProgress(true);
+      const data = new FormData();
+      data.set("largeAvatar", largeAvatar);
+
+      if (smallAvatar) data.set("smallAvatar", smallAvatar);
+
+      const res = await fetch("/api/tribes/create", {
+        method: "POST",
+        body: data,
+      });
+
+      // handle the error
+      if (!res.ok) {
+        throw new Error(await res.text());
+      } else {
+        router.push(res.url);
+      }
+    } catch (e: any) {
+      // Handle errors here
+      console.error(e);
+    } finally {
+      setIsActionInProgress(false);
+    }
+  };
 
   return (
     <div>
@@ -21,6 +60,7 @@ export default () => {
         <input
           type="file"
           className="file-input file-input-bordered file-input-secondary w-full max-w-xs"
+          onChange={(e) => setLargeAvatar(e.target.files?.[0])}
         />
       </div>
 
@@ -30,6 +70,7 @@ export default () => {
         <input
           type="file"
           className="file-input file-input-bordered file-input-secondary w-full max-w-xs"
+          onChange={(e) => setSmallAvatar(e.target.files?.[0])}
         />
       </div>
 
@@ -41,8 +82,8 @@ export default () => {
       ) : (
         <button
           className="btn"
-          onClick={() => {
-            setIsActionInProgress(true);
+          onClick={(e: any) => {
+            onSubmit(e);
           }}
           disabled={isActionInProgress}
         >
