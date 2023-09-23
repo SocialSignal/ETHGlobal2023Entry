@@ -1,6 +1,5 @@
-function polling() {
-  // console.log("polling");
-  setTimeout(polling, 1000 * 30);
-}
-
-polling();
+// async function getSocialSignalSummary(address: string) {
+//   return await (
+//     await fetch("https://social-signal.vercel.app/api/extension")
+//   ).json();
+// }
