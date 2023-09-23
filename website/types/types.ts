@@ -141,3 +141,91 @@ export type SharedContext = {
      */
     sharedWithViewer: boolean | null;
 };
+
+/*
+ * Attributes of an account that are sourced from ENS.
+ */
+export type ENSProfile = {
+
+    /*
+     * Array of 0 or more ValueReferences.
+     * Sourced from ENS Resolver records.
+     */
+    values: ValueReference[];
+
+    /*
+     * Provides a user friendly display name for an account.
+     * NOTE: This field is related to the "primary ENS name" of an account, but with additional logic to
+     * make frontend implementations easier. For example:
+     *    If the "primary ENS name" for an account is not defined:
+     *      returns “Unknown abcd" where “abcd” are the first 4 hex digits of the Address.
+     *      (therefore all accounts always have a displayName)
+     *    Else if the "primary ENS name" for an account is not normalized:
+     *      returns same as if no "primary ENS name" was defined
+     *    Else:
+     *      returns the ENS beautified version of the "primary ENS name"
+     * Sourced from ENS.
+     */
+    displayName: string;
+
+    /*
+     * URL to avatar image of the account in our own backend.
+     * Requests to this URL will ask our backend to do the work to ultimately
+     * resolve this image and return it as image data.
+     * 
+     * NOTE: all accounts will always have an avatar image returned, even if there is no
+     * avatar defined in ENS. If no avatar is defined the backend will generate a default
+     * avatar as a fallback.
+     * 
+     * Url will always be in the format `/address/${account}/avatar`.
+     * 
+     * Image data ultimately returned by that URL will be sourced from ENS Resolver records.
+     */
+    avatar: string;
+
+    /*
+     * A brief description of the account.
+     * Sourced from ENS Resolver records.
+     * null if and only if no description defined in ENS Resolver records.
+     */
+    description: string | null;
+
+    /*
+     * The Twitter handle associated with the account.
+     * Sourced from ENS Resolver records.
+     * null if and only if no Twitter handle defined in ENS Resolver records.
+     * Assume this is just a handle to a twitter account, and not the full URL to a twitter profile.
+     */
+    twitter: string | null;
+
+    /*
+     * The email address associated with the account.
+     * Sourced from ENS Resolver records.
+     * null if and only if no email address defined in ENS Resolver records.
+     */
+    email: string | null;
+
+    /*
+     * The website associated with the account.
+     * Sourced from ENS Resolver records.
+     * null if and only if website defined in ENS Resolver records.
+     * Assume this is a full URL to a website.
+     */
+    website: string | null;
+
+    /*
+     * The GitHub handle associated with the account.
+     * Sourced from ENS Resolver records.
+     * null if and only if no GitHub handle defined in ENS Resolver records.
+     * Assume this is just a handle to a GitHub account, and not the full URL to a GitHub profile.
+     */
+    github: string | null;
+
+    /*
+     * The Telegram handle associated with the account.
+     * Sourced from ENS Resolver records.
+     * null if and only if no Telegram handle defined in ENS Resolver records.
+     * Assume this is just a handle to a Telegram account, and not the full URL to a Telegram profile.
+     */
+    telegram: string | null;
+};
