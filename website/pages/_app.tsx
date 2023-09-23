@@ -1,7 +1,6 @@
 import type { AppProps } from "next/app";
 import { WagmiConfig } from "wagmi";
 import { mainnet } from "wagmi/chains";
-import { theme } from "../styles/theme";
 import Footer from "../components/core/Footer";
 // import "@web3inbox/widget-react/dist/compiled.css";
 

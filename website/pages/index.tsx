@@ -13,11 +13,11 @@ import { FaBell, FaBellSlash, FaPause, FaPlay } from "react-icons/fa";
 import { BsPersonFillCheck, BsSendFill } from "react-icons/bs";
 import useSendNotification from "../utils/useSendNotification";
 import { useInterval } from "usehooks-ts";
-import Preferences from "../components/Preferences";
-import Messages from "../components/Messages";
-import Subscription from "../components/Subscription";
+// import Preferences from "../components/Preferences";
+// import Messages from "../components/Messages";
+// import Subscription from "../components/Subscription";
 import { sendNotification } from "../utils/fetchNotify";
-import Subscribers from "../components/Subscribers";
+// import Subscribers from "../components/Subscribers";
 import toast from "react-hot-toast";
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
@@ -236,10 +236,10 @@ const Home: NextPage = () => {
         {isSubscribed && (
           // <Accordion defaultIndex={[1]} allowToggle mt={10} rounded="xl">
           <div className="mt-10">
-            <Subscription />
+            {/* <Subscription />
             <Messages />
             <Preferences />
-            <Subscribers />
+            <Subscribers /> */}
           </div>
         )}
       </div>
