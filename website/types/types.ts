@@ -37,24 +37,24 @@ export type TribeSummary = {
     owner: string;
 
     /*
-     * URL to large image of the Tribe in our own backend.
+     * URL to (large) avatar image of the Tribe in our own backend.
      * Requests to this URL will ask our backend to do the work to ultimately
      * resolve this image and return it as image data.
      * 
-     * Url will always be in the format `/tribes/${chainId}/${tribeAddress}/largeImage`.
+     * Url will always be in the format `/tribes/${chainId}/${tribeAddress}/avatar`.
      * 
      */
-    largeImage: string;
+    avatar: string;
 
     /*
-     * URL to small badge image of the Tribe in our own backend.
+     * URL to (small) badge image of the Tribe in our own backend.
      * Requests to this URL will ask our backend to do the work to ultimately
      * resolve this image and return it as image data.
      * 
-     * Url will always be in the format `/tribes/${chainId}/${tribeAddress}/smallBadge`.
+     * Url will always be in the format `/tribes/${chainId}/${tribeAddress}/badge`.
      * 
      */
-    smallBadge: string;
+    badge: string;
 
     /*
      * The number of members in the Tribe.
@@ -169,7 +169,7 @@ export type SocialStorySummary = {
      * Url will always be in the format `/social-story/{source}/badge`.
      * 
      */
-    sourceBadge: string;
+    badge: string;
 
     /*
      * Identifies if the `SocialStorySummary` is also held by the “viewed-from” user account.
@@ -353,7 +353,7 @@ export type AccountDetail = AccountSummary & {
      * (they hold the NFT of the Tribe) but have not yet been formally admitted by the Tribe owner
      * as a member yet.
      */
-    supported: TribeSummary[];
+    supports: TribeSummary[];
 
     /*
      * An array of 0 or more TribeSummary values identifying all the tribes who the account has
