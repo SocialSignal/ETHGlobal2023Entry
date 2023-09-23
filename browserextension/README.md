@@ -1,0 +1,1 @@
+Browser extension to show social signals will go here.
