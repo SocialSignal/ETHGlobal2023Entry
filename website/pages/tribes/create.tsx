@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { toastError } from "../../components/Notifications";
 import { sfxAtom } from "../../components/core/Navbar";
 import { useAtom } from "jotai";
+import { useNetwork, useAccount } from "wagmi";
 
 export default () => {
   const router = useRouter();
@@ -11,13 +12,14 @@ export default () => {
 
   const [isActionInProgress, setIsActionInProgress] = useState(false);
   const [name, setName] = useState<string>();
-  const [chainId, setChaind] = useState<number>(5);
   const [description, setDescription] = useState<string>();
   const [ensName, setENSName] = useState<string>();
   const [tribeValues, setTribeValues] = useState<string>();
   const [largeAvatar, setLargeAvatar] = useState<File>();
   const [smallAvatar, setSmallAvatar] = useState<File>();
   const lastAudioRef = useRef<HTMLAudioElement>();
+  const { chain } = useNetwork();
+  const { address } = useAccount();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,10 +47,13 @@ export default () => {
       const data = new FormData();
       data.set("largeAvatar", largeAvatar);
       data.set("name", name);
-      data.set("chainId", chainId.toString());
 
+      if (chain) data.set("chainId", chain?.id.toString());
+      if (ensName) data.set("ensName", ensName);
       if (description) data.set("description", description);
       if (smallAvatar) data.set("smallAvatar", smallAvatar);
+      if (address) data.set("owner", address);
+      if (tribeValues) data.set("tribeValues", tribeValues);
 
       const res = await fetch("/api/tribes/create", {
         method: "POST",
