@@ -81,13 +81,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const contractMetadataCID = await pinFiles([tmpPath], ["metadata.json"]);
 
       const baseURI = `ipfs://${contractMetadataCID}/metadata.json`;
-      const chainId = fields.chainId.trim(); 
+      const networkName = fields.network.trim(); 
       const nftName = "Settlers";
       const nftSymbol = "SETTLERS";
       const owner = fields.owner.trim();
       const ensName = fields.ensName.trim();
 
-      // const txHash = await createTribe(chainId, nftName, nftSymbol, owner, baseURI, ensName);
+      // const txHash = await createTribe(networkName, nftName, nftSymbol, owner, baseURI, ensName);
       const txHash = "0xa40c0b13858f3eba60902adb6bcdc5ec78151ab0538a5c64ecb820d8aa72e839"
       return res.json({ txHash });
     } catch (e) {

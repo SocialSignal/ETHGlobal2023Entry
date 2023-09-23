@@ -4,7 +4,19 @@ import { useRef, useState } from "react";
 import { toastError } from "../../components/Notifications";
 import { sfxAtom } from "../../components/core/Navbar";
 import { useAtom } from "jotai";
-import { useNetwork, useAccount } from "wagmi";
+import { useAccount } from "wagmi";
+
+const networkOptions = [
+  "gnosis",
+  "arbitrum",
+  "scroll",
+  "base",
+  "mantle",
+  "celo",
+  "linea",
+  "neonevm",
+  "polygon",
+];
 
 export default () => {
   const router = useRouter();
@@ -12,13 +24,13 @@ export default () => {
 
   const [isActionInProgress, setIsActionInProgress] = useState(false);
   const [name, setName] = useState<string>();
+  const [network, setNetwork] = useState<string>();
   const [description, setDescription] = useState<string>();
   const [ensName, setENSName] = useState<string>();
   const [tribeValues, setTribeValues] = useState<string>();
   const [largeAvatar, setLargeAvatar] = useState<File>();
   const [smallAvatar, setSmallAvatar] = useState<File>();
   const lastAudioRef = useRef<HTMLAudioElement>();
-  const { chain } = useNetwork();
   const { address } = useAccount();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -28,6 +40,15 @@ export default () => {
       return;
     } else if (!name?.trim().length) {
       toastError(audioEnabled, "Name is required");
+      return;
+    } else if (!network?.trim().length) {
+      toastError(audioEnabled, "Network is required");
+      return;
+    } else if (!ensName?.trim().length) {
+      toastError(audioEnabled, "ensName is required");
+      return;
+    } else if (!tribeValues?.trim().length) {
+      toastError(audioEnabled, "Tribe values are required");
       return;
     }
 
@@ -47,13 +68,13 @@ export default () => {
       const data = new FormData();
       data.set("largeAvatar", largeAvatar);
       data.set("name", name);
+      data.set("network", network);
+      data.set("ensName", ensName);
+      data.set("tribeValues", tribeValues);
 
-      if (chain) data.set("chainId", chain?.id.toString());
-      if (ensName) data.set("ensName", ensName);
       if (description) data.set("description", description);
       if (smallAvatar) data.set("smallAvatar", smallAvatar);
-      if (address) data.set("owner", address);
-      if (tribeValues) data.set("tribeValues", tribeValues);
+      if (address) data.set("owner", address); // TODO make this mandatory
 
       const res = await fetch("/api/tribes/create", {
         method: "POST",
@@ -171,6 +192,21 @@ export default () => {
           onChange={(e) => setSmallAvatar(e.target.files?.[0])}
         />
       </div>
+
+      <select
+        className="select select-bordered select-xs w-full max-w-xs text-white"
+        value={network}
+        onChange={(e) => setNetwork(e.target.value)}
+      >
+        <option disabled selected>
+          Network
+        </option>
+        {networkOptions.map((x) => (
+          <option key={x} value={x}>
+            {x}
+          </option>
+        ))}
+      </select>
 
       {isActionInProgress ? (
         <button className="btn" disabled>

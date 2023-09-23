@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 const tribeFactoryABI = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"tribeAddress","type":"address"}],"name":"TribeFounded","type":"event"},{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"},{"internalType":"address","name":"owner","type":"address"},{"internalType":"string","name":"nftImageURI","type":"string"},{"internalType":"string","name":"ensName","type":"string"}],"name":"createTribe","outputs":[{"internalType":"address","name":"tribeAddress","type":"address"}],"stateMutability":"nonpayable","type":"function"}]
 
 // This function should be server-side only to securely use the PRIVATE_KEY environment variable
-export async function createTribe(chainId: number, name: string, symbol: string, owner: string, baseURI: string, ensName: string) {
+export async function createTribe(networkName: string, name: string, symbol: string, owner: string, baseURI: string, ensName: string) {
   try {
     // Import the private key from environment variables
     const privateKey = process.env.PRIVATE_KEY;
