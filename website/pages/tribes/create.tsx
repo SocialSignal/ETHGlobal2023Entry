@@ -11,6 +11,7 @@ export default () => {
 
   const [isActionInProgress, setIsActionInProgress] = useState(false);
   const [name, setName] = useState<string>();
+  const [chainId, setChaind] = useState<number>(5);
   const [description, setDescription] = useState<string>();
   const [largeAvatar, setLargeAvatar] = useState<File>();
   const [smallAvatar, setSmallAvatar] = useState<File>();
@@ -42,6 +43,7 @@ export default () => {
       const data = new FormData();
       data.set("largeAvatar", largeAvatar);
       data.set("name", name);
+      data.set("chainId", chainId.toString());
 
       if (description) data.set("description", description);
       if (smallAvatar) data.set("smallAvatar", smallAvatar);
