@@ -10,13 +10,7 @@ import Navbar from "../components/core/Navbar";
 import "../styles/globals.css";
 import { Toaster } from "react-hot-toast";
 
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-} from "react-query";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { SkeletonTheme } from "react-loading-skeleton";
 
 // 1. Get projectID at https://cloud.walletconnect.com
