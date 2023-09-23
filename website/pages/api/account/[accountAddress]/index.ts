@@ -1,15 +1,20 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { buildMockAccountSummary, buildMockTribeSummary } from "../../../../lib/api/utils";
 import { buildValueReferences } from "../../../../lib/shared/utils";
-import { AccountDetail } from "../../../../types/types";
+import { AccountDetail, AccountSummary } from "../../../../types/types";
 
 // TODO: validation with zod
 type RequestData = {
 
  /*
-  * The account being viewed.
+  * The account being requested.
   */
   address: string;
+
+  /*
+   * Identifies if we should return an AccountSummary or an AccountDetail.
+   */
+  summary: boolean;
 
   /*
    * Identifies the address of the signed in user who is viewing the Account.
@@ -23,7 +28,7 @@ type ResponseData = {
   /*
    * Returns the details of an Account.
    */
-  account: AccountDetail;
+  account: AccountSummary | AccountDetail;
 }
 
 type ErrorInfo = {
@@ -45,27 +50,36 @@ export default function getTribeDetail(
 
   const requestData: RequestData = {
     address: accountAddress.toLowerCase(),
+    summary: req.query.summary ? req.query.summary.toString().toLowerCase() === "true" : false,
     viewer: req.query.viewer ? req.query.viewer.toString() : null
   };
 
-  console.log(`/api/account/${requestData.address}: viewer: ${requestData.viewer}`);
+  console.log(`/api/account/${requestData.address}: viewer: ${requestData.viewer}, summary: ${requestData.summary}`);
 
   const values = buildValueReferences("Web3, Decentralization, LOVE, Environment", null);
   const tribeSummary1 = buildMockTribeSummary(1, "0x283af0b28c62c092c9727f1ee09c02ca627eb7f5", "Tribe 1", "0xd8da6bf26964af9d7eed9e03e53415d37aa96045", 123, values);
-  // TODO: Add more tribeSummary objects to mock response
-
   const accountSummary = buildMockAccountSummary("0x1a199654959140e5c1a2f4135faa7ba2748939c5", tribeSummary1, values);
 
-  const account: AccountDetail = {
-    ...accountSummary,
-    tribes: [tribeSummary1],
-    supports: [],
-    invites: [],
-  };
+  let account: AccountSummary | AccountDetail;
+  
+  if (requestData.summary) {
+    account = accountSummary;
+
+  } else {
+
+    // TODO: Add more tribeSummary objects to mock response
+
+    account = {
+        ...accountSummary,
+        tribes: [tribeSummary1],
+        supports: [],
+        invites: [],
+      };
+  }
 
   const response: ResponseData = {
-    account: account
+    account: accountSummary
   };
 
-  res.status(200).json(response)
+  res.status(200).json(response);
 }
