@@ -17,7 +17,7 @@ function Navbar() {
         <div className="image_preview h-full"></div>
       </motion.div>
       <div className="relative items-center justify-between w-full z-10 px-8 py-4">
-        <div className="gap-4 items-center">
+        <div className="gap-4 items-center flex flex-row">
           <NavLink
             href="/"
             onClick={() => {
@@ -30,6 +30,48 @@ function Navbar() {
             }}
           >
             Home
+          </NavLink>
+          <span>|</span>
+          <NavLink
+            href="/tribes/create"
+            onClick={() => {
+              try {
+                const sfx = new Audio("/sfx/go-home.mp3");
+                sfx.currentTime = 0;
+                sfx.volume = 1;
+                sfx.play();
+              } catch (e) {}
+            }}
+          >
+            Create
+          </NavLink>
+          <span>|</span>
+          <NavLink
+            href="/explore"
+            onClick={() => {
+              try {
+                const sfx = new Audio("/sfx/go-home.mp3");
+                sfx.currentTime = 0;
+                sfx.volume = 1;
+                sfx.play();
+              } catch (e) {}
+            }}
+          >
+            Explore
+          </NavLink>
+          <span>|</span>
+          <NavLink
+            href="/me"
+            onClick={() => {
+              try {
+                const sfx = new Audio("/sfx/go-home.mp3");
+                sfx.currentTime = 0;
+                sfx.volume = 1;
+                sfx.play();
+              } catch (e) {}
+            }}
+          >
+            Mine
           </NavLink>
         </div>
         {/* <w3m-button label="Connect Wallet" balance="show" /> */}
