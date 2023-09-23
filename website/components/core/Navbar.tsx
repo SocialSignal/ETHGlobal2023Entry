@@ -1,8 +1,27 @@
 import React from "react";
 import { NavLink } from "./NavLink";
 import { motion } from "framer-motion";
+import { atomWithStorage, createJSONStorage } from "jotai/utils";
+import { useAtom } from "jotai";
+import { IconMusicNote } from "../Icons/IconMusicNote";
+import { IconMusicNoteSlash } from "../Icons/IconMusicNoteSlash";
+
+const storage = createJSONStorage(() => sessionStorage);
+export const sfxAtom = atomWithStorage("sfx-enabled", "false", storage);
 
 function Navbar() {
+  const [audioEnabled, setAudioEnabled] = useAtom(sfxAtom);
+
+  function playNavigationSound() {
+    if (!audioEnabled) return;
+    try {
+      const sfx = new Audio("/sfx/go-home.mp3");
+      sfx.currentTime = 0;
+      sfx.volume = 1;
+      sfx.play();
+    } catch (e) {}
+  }
+
   return (
     <div className="w-full">
       {/* <div className="absolute top-0 mx-auto">
@@ -21,12 +40,7 @@ function Navbar() {
           <NavLink
             href="/"
             onClick={() => {
-              try {
-                const sfx = new Audio("/sfx/go-home.mp3");
-                sfx.currentTime = 0;
-                sfx.volume = 1;
-                sfx.play();
-              } catch (e) {}
+              playNavigationSound();
             }}
           >
             Home
@@ -35,12 +49,7 @@ function Navbar() {
           <NavLink
             href="/tribes/create"
             onClick={() => {
-              try {
-                const sfx = new Audio("/sfx/go-home.mp3");
-                sfx.currentTime = 0;
-                sfx.volume = 1;
-                sfx.play();
-              } catch (e) {}
+              playNavigationSound();
             }}
           >
             Create
@@ -49,12 +58,7 @@ function Navbar() {
           <NavLink
             href="/explore"
             onClick={() => {
-              try {
-                const sfx = new Audio("/sfx/go-home.mp3");
-                sfx.currentTime = 0;
-                sfx.volume = 1;
-                sfx.play();
-              } catch (e) {}
+              playNavigationSound();
             }}
           >
             Explore
@@ -63,18 +67,21 @@ function Navbar() {
           <NavLink
             href="/me"
             onClick={() => {
-              try {
-                const sfx = new Audio("/sfx/go-home.mp3");
-                sfx.currentTime = 0;
-                sfx.volume = 1;
-                sfx.play();
-              } catch (e) {}
+              playNavigationSound();
             }}
           >
             Mine
           </NavLink>
         </div>
         <w3m-button label="Connect Wallet" balance="show" />
+        <div className="absolute top-1 right-4">
+          <div
+            onClick={() => setAudioEnabled(!audioEnabled)}
+            className="cursor-pointer w-5 h-5 opacity-80 hover:opacity-100 fill-white ml-2 mt-2"
+          >
+            {audioEnabled ? <IconMusicNote /> : <IconMusicNoteSlash />}
+          </div>
+        </div>
       </div>
     </div>
   );

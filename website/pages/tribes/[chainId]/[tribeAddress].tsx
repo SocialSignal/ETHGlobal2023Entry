@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import Skeleton from "react-loading-skeleton";
 
 export default () => {
-  const { id } = useRouter().query;
+  const { chainId, tribeAddress } = useRouter().query;
   const [imgLoaded, setImgLoaded] = useState(false);
 
   const {
@@ -13,10 +13,11 @@ export default () => {
     isError,
     isSuccess,
   } = useQuery(
-    ["tribe", id],
-    async () => await (await fetch(`/api/tribes/${id}/`)).json(),
+    ["tribe", chainId, tribeAddress],
+    async () =>
+      await (await fetch(`/api/tribes/${chainId}/${tribeAddress}`)).json(),
     {
-      enabled: !!id?.length,
+      enabled: !!chainId?.length && !!tribeAddress?.length,
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
@@ -25,7 +26,9 @@ export default () => {
 
   return (
     <div>
-      <div>Id is {id}</div>
+      <div>
+        {chainId}:{tribeAddress}
+      </div>
       {isLoading ? (
         <div>...</div>
       ) : tribeData != null ? (

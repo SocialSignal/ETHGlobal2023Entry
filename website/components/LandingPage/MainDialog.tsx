@@ -2,10 +2,14 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { TribeList } from "../TribeList";
+import { sfxAtom } from "../core/Navbar";
+import { useAtom } from "jotai";
 
 export default function MainDialog({ onPlayGlobalSound }: any) {
-  const [isClosing, setIsClosing] = useState(false);
   const router = useRouter();
+  const [isClosing, setIsClosing] = useState(false);
+  const [audioEnabled] = useAtom(sfxAtom);
 
   return (
     <motion.div
@@ -23,8 +27,8 @@ export default function MainDialog({ onPlayGlobalSound }: any) {
         },
       }}
     >
-      <div className="flex flex-col min-w-[540px] max-w-[940px] bg-[#fefefe] px-8 py-10 rounded-xl">
-        <h1 className="text-3xl font-bold underline text-red-500">
+      <div className="text-black shadow-inner flex flex-col min-w-[540px] max-w-[940px] bg-[#E0B779] px-8 py-10 rounded-xl">
+        <h1 className="text-3xl font-bold underline">
           <Link
             href="/tribes/create"
             onClick={(e) => {
@@ -33,14 +37,18 @@ export default function MainDialog({ onPlayGlobalSound }: any) {
               try {
                 onPlayGlobalSound();
 
-                var audio = new Audio("/sfx/create-tribe.mp3");
-                audio.volume = 1;
-                audio.play();
-                e.preventDefault();
+                if (audioEnabled) {
+                  var audio = new Audio("/sfx/create-tribe.mp3");
+                  audio.volume = 1;
+                  audio.play();
+                  e.preventDefault();
 
-                setTimeout(() => {
+                  setTimeout(() => {
+                    router.push("/tribes/create");
+                  }, 1200);
+                } else {
                   router.push("/tribes/create");
-                }, 1200);
+                }
               } catch (e) {}
             }}
           >
@@ -51,6 +59,7 @@ export default function MainDialog({ onPlayGlobalSound }: any) {
           <a href="/tribes">See your tribes</a>
         </h1>
       </div>
+      <TribeList />
     </motion.div>
   );
 }

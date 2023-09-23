@@ -1,11 +1,13 @@
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
-import toast from "react-hot-toast";
 import { toastError } from "../../components/Notifications";
+import { sfxAtom } from "../../components/core/Navbar";
+import { useAtom } from "jotai";
 
 export default () => {
   const router = useRouter();
+  const [audioEnabled] = useAtom(sfxAtom);
 
   const [isActionInProgress, setIsActionInProgress] = useState(false);
   const [name, setName] = useState<string>();
@@ -17,20 +19,23 @@ export default () => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!largeAvatar) {
-      toastError("Large avatar is required");
+      toastError(audioEnabled, "Large avatar is required");
       return;
     } else if (!name?.trim().length) {
-      toastError("Name is required");
+      toastError(audioEnabled, "Name is required");
       return;
     }
 
     try {
       try {
         if (lastAudioRef.current) lastAudioRef.current.pause();
-        const sfx = new Audio("/sfx/create-tribe-press.mp3");
-        sfx.currentTime = 0;
-        sfx.volume = 1;
-        sfx.play();
+
+        if (audioEnabled) {
+          const sfx = new Audio("/sfx/create-tribe-press.mp3");
+          sfx.currentTime = 0;
+          sfx.volume = 1;
+          sfx.play();
+        }
       } catch (e) {}
 
       setIsActionInProgress(true);
@@ -47,14 +52,17 @@ export default () => {
       });
 
       if (!res.ok) {
-        toastError(await res.text());
+        toastError(audioEnabled, await res.text());
       } else {
         try {
           if (lastAudioRef.current) lastAudioRef.current.pause();
-          const sfx = new Audio("/sfx/tribe-create-succeed.mp3");
-          sfx.currentTime = 0;
-          sfx.volume = 1;
-          sfx.play();
+
+          if (audioEnabled) {
+            const sfx = new Audio("/sfx/tribe-create-succeed.mp3");
+            sfx.currentTime = 0;
+            sfx.volume = 1;
+            sfx.play();
+          }
         } catch (e) {}
 
         router.push(res.url);
@@ -77,7 +85,7 @@ export default () => {
       <div className="form-control w-full max-w-xs">
         <label className="label">
           <span className="label-text text-black">
-            What is your tribe's name
+            What is your tribe&apos;s name
           </span>
         </label>
         <input
