@@ -4,13 +4,22 @@ import formidable from "formidable-serverless";
 import { rmSync, writeFileSync } from "fs";
 import { v4 as uuidv4 } from "uuid";
 
-async function pinFile(file: any) {
+async function pinFiles(paths: string[], names: string[]) {
   const storage = new Web3Storage({ token: process.env.WEB3_STORAGE_API_KEY! });
-  const pathFiles = await getFilesFromPath(file.path);
-  const cid = await storage.put(pathFiles);
+  const retrievedFiles = await getFilesFromPath(paths);
+  retrievedFiles[0].name = "test.json";
 
-  // Clean up the uploaded file.
-  rmSync(file.path);
+  // Override the file names according to the given names array.
+  // The CID will return the CID for the whole folder, and then each
+  // file in the folder needs to be retrieved according to its name.
+  const cid = await storage.put(
+    retrievedFiles.map((x, i) => ({ ...x, name: names[i] }))
+  );
+
+  // Clean up the uploaded files.
+  paths.forEach((x) => {
+    rmSync(x);
+  });
 
   return cid;
 }
@@ -35,16 +44,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           .json({ success: false, message: "No file received" });
       }
 
-      const largeAvatarCID = await pinFile(files.largeAvatar);
-      const smallAvatarCID = files.smallAvatar
-        ? await pinFile(files.smallAvatar)
-        : null;
+      // We could do this more efficiently
+      let imagePaths = [files.largeAvatar];
+      let imageNames = ["large_avatar", "small_avatar"];
+
+      if (files.smallAvatar) {
+        imagePaths.push(files.smallAvatar);
+      }
+
+      const imagesCID = await pinFiles(
+        imagePaths,
+        imageNames.slice(0, imagePaths.length)
+      );
 
       const contractMetadata = {
         name: fields.name.trim(),
         description: fields.description.trim(),
-        image: `ipfs://${largeAvatarCID}`,
-        smallImage: smallAvatarCID ? `ipfs://${smallAvatarCID}` : null,
+        image: `ipfs://${imagesCID}/${imageNames[0]}`,
+        smallImage: files.smallAvatar
+          ? `ipfs://${imagesCID}/${imageNames[1]}`
+          : null,
 
         // We can do this if we want the values to appear in opensea..
         // attributes: values.map(x => {
@@ -58,10 +77,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // relevant to the value we're trying to deliver at the hackathon.
       const tmpPath = `${uuidv4()}.json`;
       writeFileSync(tmpPath, JSON.stringify(contractMetadata));
-      const contractMetadataCID = await pinFile({
-        path: tmpPath,
-      });
-
+      const contractMetadataCID = await pinFiles([tmpPath], ["metadata.json"]);
       return res.redirect(302, `/tribes/${contractMetadataCID}`);
     } catch (e) {
       console.error(e);

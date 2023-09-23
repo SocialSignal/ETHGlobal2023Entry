@@ -6,6 +6,8 @@ export default () => {
   const router = useRouter();
 
   const [isActionInProgress, setIsActionInProgress] = useState(false);
+  const [name, setName] = useState<string>();
+  const [description, setDescription] = useState<string>();
   const [largeAvatar, setLargeAvatar] = useState<File>();
   const [smallAvatar, setSmallAvatar] = useState<File>();
 
@@ -14,13 +16,18 @@ export default () => {
     if (!largeAvatar) {
       toast.error("Large avatar is required");
       return;
+    } else if (!name?.trim().length) {
+      toast.error("Name is required");
+      return;
     }
 
     try {
       setIsActionInProgress(true);
       const data = new FormData();
       data.set("largeAvatar", largeAvatar);
+      data.set("name", name);
 
+      if (description) data.set("description", description);
       if (smallAvatar) data.set("smallAvatar", smallAvatar);
 
       const res = await fetch("/api/tribes/create", {
@@ -28,14 +35,12 @@ export default () => {
         body: data,
       });
 
-      // handle the error
       if (!res.ok) {
         throw new Error(await res.text());
       } else {
         router.push(res.url);
       }
     } catch (e: any) {
-      // Handle errors here
       console.error(e);
     } finally {
       setIsActionInProgress(false);
@@ -49,10 +54,14 @@ export default () => {
         type="text"
         placeholder="tribe name"
         className="input input-bordered input-primary w-full max-w-xs"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
       />
       <textarea
         className="textarea textarea-primary"
         placeholder="description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
       />
 
       <div>
