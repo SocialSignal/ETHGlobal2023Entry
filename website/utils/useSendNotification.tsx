@@ -4,10 +4,13 @@ import { INotification } from "./types";
 import { sendNotification } from "./fetchNotify";
 import toast from "react-hot-toast";
 import { toastError } from "../components/Notifications";
+import { sfxAtom } from "../components/core/Navbar";
+import { useAtom } from "jotai";
 
 function useSendNotification() {
   const [isSending, setIsSending] = useState<boolean>(false);
   const { account } = useW3iAccount();
+  const [audioEnabled] = useAtom(sfxAtom);
 
   const handleSendNotification = useCallback(
     async (notification: INotification) => {
@@ -25,7 +28,7 @@ function useSendNotification() {
         if (success) {
           toast.success(notification.title);
         } else {
-          toastError("Message failed");
+          toastError(audioEnabled, "Message failed");
         }
         // toast({
         //   status: success ? "success" : "error",
@@ -37,7 +40,7 @@ function useSendNotification() {
       } catch (error: any) {
         setIsSending(false);
         console.error({ sendNotificationError: error });
-        toastError(`${error.message}:${error.cause}`);
+        toastError(audioEnabled, `${error.message}:${error.cause}`);
       }
     },
     [toast, account]

@@ -1,4 +1,6 @@
 {
   "extends": "next/core-web-vitals",
-  "react/display-name": false
+  "rules": {
+    "react/display-name": 0
+  }
 }
