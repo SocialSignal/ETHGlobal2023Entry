@@ -313,3 +313,27 @@ export type AccountSummary = {
      */
     primaryTribe: TribeSummary | null;
 };
+
+export type AccountDetail = AccountSummary & {
+
+    /*
+     * An array of 0 or more AccountSummary values identifying all the members of the Tribe.
+     * All Tribe members:
+     *     1. hold the NFT of the Tribe (therefore they are a "supporter" of the Tribe); AND
+     *     2. have been formally admitted by the Tribe owner as a member.
+     */
+    members: AccountSummary[];
+
+    /*
+     * An array of 0 or more AccountSummary values identifying all accounts who are supporting the Tribe
+     * (they hold the NFT of the Tribe) but have not yet been formally admitted by the Tribe owner
+     * as a member yet.
+     */
+    supporters: AccountSummary[];
+
+    /*
+     * An array of 0 or more AccountSummary values identifying all the accounts who have been invited to join the Tribe
+     * as members but have not supported the Tribe yet (they do NOT hold the NFT of the Tribe).
+     */
+    invites: AccountSummary[];
+}
