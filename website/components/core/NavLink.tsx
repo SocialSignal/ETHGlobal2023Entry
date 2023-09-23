@@ -1,6 +1,4 @@
 import React, { useMemo } from "react";
-import { Button, useColorModeValue } from "@chakra-ui/react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 interface Props {
@@ -15,23 +13,23 @@ export const NavLink = (props: Props) => {
     () => router?.pathname === href,
     [router?.pathname, href]
   );
-  const hoverBg = useColorModeValue("gray.200", "gray.700");
+  // const hoverBg = useColorModeValue("gray.200", "gray.700");
 
   return (
-    <Button
-      variant="outline"
-      as={Link}
-      px={4}
-      size="md"
-      rounded={"full"}
-      _hover={{
-        textDecoration: "none",
-        bg: hoverBg,
-      }}
-      href={href}
-      isActive={isActive}
+    <button
+    // variant="outline"
+    // as={Link}
+    // px={4}
+    // size="md"
+    // rounded={"full"}
+    // _hover={{
+    //   textDecoration: "none",
+    //   bg: hoverBg,
+    // }}
+    // href={href}
+    // isActive={isActive}
     >
       {children}
-    </Button>
+    </button>
   );
 };

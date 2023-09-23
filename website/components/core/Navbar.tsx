@@ -1,15 +1,14 @@
-import { Flex } from "@chakra-ui/react";
 import React from "react";
 import { NavLink } from "./NavLink";
 
 function Navbar() {
   return (
-    <Flex alignItems="center" justifyContent={"space-between"} w="full">
-      <Flex gap={4} alignItems="center">
+    <div className="items-center justify-between w-full">
+      <div className="gap-4 items-center">
         <NavLink href="/">Home</NavLink>
-      </Flex>
+      </div>
       <w3m-button label="Connect Wallet" balance="show" />
-    </Flex>
+    </div>
   );
 }
 

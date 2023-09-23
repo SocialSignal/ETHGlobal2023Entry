@@ -2,16 +2,6 @@
 import type { NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
 import {
-  Accordion,
-  Button,
-  Flex,
-  Heading,
-  Image,
-  Tooltip,
-  useColorMode,
-  useToast,
-} from "@chakra-ui/react";
-import {
   useInitWeb3InboxClient,
   useManageSubscription,
   useW3iAccount,
@@ -28,6 +18,7 @@ import Messages from "../components/Messages";
 import Subscription from "../components/Subscription";
 import { sendNotification } from "../utils/fetchNotify";
 import Subscribers from "../components/Subscribers";
+import toast from "react-hot-toast";
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
 const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN as string;
@@ -60,8 +51,7 @@ const Home: NextPage = () => {
   const { signMessageAsync } = useSignMessage();
   const wagmiPublicClient = usePublicClient();
 
-  const { colorMode } = useColorMode();
-  const toast = useToast();
+  // const { colorMode } = useColorMode();
 
   const { handleSendNotification, isSending } = useSendNotification();
   const [lastBlock, setLastBlock] = useState<string>();
@@ -122,11 +112,11 @@ const Home: NextPage = () => {
       if (lastBlock !== blockNumber.toString()) {
         setLastBlock(blockNumber.toString());
         try {
-          toast({
-            title: "New block",
-            position: "top",
-            variant: "subtle",
+          toast.success("new block", {
+            // position:
+            // variant: "subtle",
           });
+
           await sendNotification({
             accounts: [account], // accounts that we want to send the notification to.
             notification: {
@@ -138,9 +128,8 @@ const Home: NextPage = () => {
             },
           });
         } catch (error: any) {
-          toast({
-            title: "Failed to send new block notification",
-            description: error.message ?? "Something went wrong",
+          toast("Failed to send new block notification", {
+            // description: error.message ?? "Something went wrong",
           });
         }
       }
@@ -159,99 +148,102 @@ const Home: NextPage = () => {
   }, 12000);
 
   return (
-    <Flex w="full" flexDirection={"column"} maxW="700px">
-      <Image
+    <div className="w-full flex flex-col max-w-[700px]">
+      <img
         aria-label="WalletConnect"
         src={
-          colorMode === "dark"
-            ? "/WalletConnect-white.svg"
-            : "/WalletConnect-black.svg"
+          // colorMode === "dark"
+          true ? "/WalletConnect-white.svg" : "/WalletConnect-black.svg"
         }
       />
 
-      <h1 className="text-3xl font-bold underline text-red-500">Hello world!</h1>
+      <h1 className="text-3xl font-bold underline text-red-500">
+        <a href="/tribes/create">Create tribe!</a>
+      </h1>
+      <h1 className="text-3xl font-bold underline">
+        <a href="/tribes">See your tribes</a>
+      </h1>
 
-      <Heading alignSelf={"center"} textAlign={"center"} mb={6}>
-        Web3Inbox hooks
-      </Heading>
+      <h3 className="self-center text-center mb-6">Web3Inbox hooks</h3>
 
-      <Flex flexDirection="column" gap={4}>
+      <div className="flex flex-col gap-4">
         {isSubscribed ? (
-          <Flex flexDirection={"column"} alignItems="center" gap={4}>
-            <Button
-              leftIcon={<BsSendFill />}
-              variant="outline"
+          <div className="flex flex-col gap-4 items-center">
+            <button
+              // leftIcon={<BsSendFill />}
+              // variant="outline"
               onClick={handleTestNotification}
-              isDisabled={!isW3iInitialized}
-              colorScheme="purple"
-              rounded="full"
-              isLoading={isSending}
-              loadingText="Sending..."
+              disabled={!isW3iInitialized}
+              // colorScheme="purple"
+              // rounded="full"
+              // isLoading={isSending}
+              // loadingText="Sending..."
             >
               Send test notification
-            </Button>
-            <Button
-              leftIcon={isBlockNotificationEnabled ? <FaPause /> : <FaPlay />}
-              variant="outline"
+            </button>
+            <button
+              // leftIcon={isBlockNotificationEnabled ? <FaPause /> : <FaPlay />}
+              // variant="outline"
               onClick={() =>
                 setIsBlockNotificationEnabled((isEnabled) => !isEnabled)
               }
-              isDisabled={!isW3iInitialized}
-              colorScheme={isBlockNotificationEnabled ? "orange" : "blue"}
-              rounded="full"
+              disabled={!isW3iInitialized}
+              // colorScheme={isBlockNotificationEnabled ? "orange" : "blue"}
+              // rounded="full"
             >
               {isBlockNotificationEnabled ? "Pause" : "Resume"} block
               notifications
-            </Button>
-            <Button
-              leftIcon={<FaBellSlash />}
+            </button>
+            <button
+              // leftIcon={<FaBellSlash />}
               onClick={unsubscribe}
-              variant="outline"
-              isDisabled={!isW3iInitialized || !account}
-              colorScheme="red"
-              isLoading={isUnsubscribing}
-              loadingText="Unsubscribing..."
-              rounded="full"
+              // variant="outline"
+              disabled={!isW3iInitialized || !account}
+              // colorScheme="red"
+              // isLoading={isUnsubscribing}
+              // loadingText="Unsubscribing..."
+              // rounded="full"
             >
               Unsubscribe
-            </Button>
-          </Flex>
+            </button>
+          </div>
         ) : (
-          <Tooltip
-            label={
-              !Boolean(address)
-                ? "Connect your wallet first."
-                : "Register your account."
-            }
-            hidden={Boolean(account)}
+          // <Tooltip
+          //   label={
+          //     !Boolean(address)
+          //       ? "Connect your wallet first."
+          //       : "Register your account."
+          //   }
+          //   hidden={Boolean(account)}
+          // >
+          <button
+            // leftIcon={<FaBell />}
+            onClick={subscribe}
+            // colorScheme="cyan"
+            // rounded="full"
+            // variant="outline"
+            // w="fit-content"
+            // alignSelf="center"
+            // isLoading={isSubscribing}
+            // loadingText="Subscribing..."
+            disabled={!Boolean(address) || !Boolean(account)}
           >
-            <Button
-              leftIcon={<FaBell />}
-              onClick={subscribe}
-              colorScheme="cyan"
-              rounded="full"
-              variant="outline"
-              w="fit-content"
-              alignSelf="center"
-              isLoading={isSubscribing}
-              loadingText="Subscribing..."
-              isDisabled={!Boolean(address) || !Boolean(account)}
-            >
-              Subscribe
-            </Button>
-          </Tooltip>
+            Subscribe
+          </button>
+          // </Tooltip>
         )}
 
         {isSubscribed && (
-          <Accordion defaultIndex={[1]} allowToggle mt={10} rounded="xl">
+          // <Accordion defaultIndex={[1]} allowToggle mt={10} rounded="xl">
+          <div className="mt-10">
             <Subscription />
             <Messages />
             <Preferences />
             <Subscribers />
-          </Accordion>
+          </div>
         )}
-      </Flex>
-    </Flex>
+      </div>
+    </div>
   );
 };
 
