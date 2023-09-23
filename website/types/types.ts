@@ -63,6 +63,11 @@ export type TribeSummary = {
      */
     memberCount: number;
 
+    /*
+     * Profile details of the Tribe's ENS name.
+     */
+    ensProfile: ENSProfile;
+
 };
 
 export type TribeDetail = TribeSummary & {
