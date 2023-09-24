@@ -6,13 +6,7 @@ import { sfxAtom } from "../../components/core/Navbar";
 import { useAtom } from "jotai";
 import { useAccount } from "wagmi";
 import { useTribeENSRepair } from "../../components/hooks/useTribeENSRepair";
-import {
-  Provider,
-  Signer,
-  Transaction,
-  TransactionReceipt,
-  ZeroAddress,
-} from "ethers";
+import { Provider, ZeroAddress } from "ethers";
 
 const networkIds = {
   gnosis: 100,
@@ -53,7 +47,6 @@ function waitForTx(txHash: string, provider: Provider) {
 }
 
 export default () => {
-  const router = useRouter();
   const [audioEnabled] = useAtom(sfxAtom);
   const [actionMessage, setActionMessage] = useState<string>();
 
