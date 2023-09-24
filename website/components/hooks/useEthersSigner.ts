@@ -1,7 +1,7 @@
 // From https://wagmi.sh/react/ethers-adapters
 import * as React from "react";
 import { type WalletClient, useWalletClient } from "wagmi";
-import { BrowserProvider, JsonRpcSigner } from "ethers";
+import { ethers   } from "ethers";
 
 export function walletClientToSigner(walletClient: WalletClient) {
   const { account, chain, transport } = walletClient;
@@ -10,8 +10,8 @@ export function walletClientToSigner(walletClient: WalletClient) {
     name: chain.name,
     ensAddress: chain.contracts?.ensRegistry?.address,
   };
-  const provider = new BrowserProvider(transport, network);
-  const signer = new JsonRpcSigner(provider, account.address);
+  const provider = new ethers.providers.Web3Provider(transport, network);
+  const signer = provider.getSigner(account.address);
   return signer;
 }
 
