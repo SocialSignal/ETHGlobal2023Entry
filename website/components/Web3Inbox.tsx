@@ -10,6 +10,9 @@ import { useAccount, useSignMessage, usePublicClient } from "wagmi";
 import { sendNotification } from "../utils/fetchNotify";
 import useSendNotification from "../utils/useSendNotification";
 import "@web3inbox/widget-react/dist/compiled.css";
+import Messages from "./Messages";
+import Subscribers from "./Subscribers";
+import Subscription from "./Subscription";
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
 const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN as string;
@@ -215,10 +218,10 @@ export const Web3Inbox = () => {
         {isSubscribed && (
           // <Accordion defaultIndex={[1]} allowToggle mt={10} rounded="xl">
           <div className="mt-10">
-            {/* <Subscription />
+            <Subscription />
             <Messages />
-            <Preferences />
-            <Subscribers /> */}
+            {/* <Preferences /> */}
+            <Subscribers />
           </div>
         )}
       </div>
