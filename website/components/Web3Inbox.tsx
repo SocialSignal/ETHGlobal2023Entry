@@ -215,15 +215,14 @@ export const Web3Inbox = () => {
           // </Tooltip>
         )}
 
-        {isSubscribed && (
-          // <Accordion defaultIndex={[1]} allowToggle mt={10} rounded="xl">
-          <div className="mt-10">
-            <Subscription />
-            <Messages />
-            {/* <Preferences /> */}
-            <Subscribers />
-          </div>
-        )}
+        {/* {isSubscribed && ( */}
+        <div className="mt-10">
+          <Subscription />
+          <Messages />
+          {/* <Preferences /> */}
+          <Subscribers />
+        </div>
+        {/* )} */}
       </div>
     </div>
   );
