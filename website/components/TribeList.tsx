@@ -6,7 +6,7 @@ import { TribeRow } from "./TribeRow";
 export const TribeList = () => {
   const { data, isLoading } = useQuery(
     "tribes",
-    async () => await (await fetch("/api/tribes")).json(),
+    async () => await (await fetch("/api/tribes?chainId=5")).json(),
     {
       refetchOnMount: false,
       refetchOnReconnect: false,
