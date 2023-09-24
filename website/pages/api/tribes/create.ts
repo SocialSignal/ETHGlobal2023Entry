@@ -5,9 +5,9 @@ import { rmSync, writeFileSync } from "fs";
 import { v4 as uuidv4 } from "uuid";
 import { createTribe } from "../../../lib/createTribe";
 
-async function pinFiles(paths: string[], names: string[]) {
+async function pinFiles(retrievedFiles: any[], names: string[]) {
   const storage = new Web3Storage({ token: process.env.WEB3_STORAGE_API_KEY! });
-  const retrievedFiles = await getFilesFromPath(paths);
+  // const retrievedFiles = await getFilesFromPath(paths);
 
   // Override the file names according to the given names array.
   // The CID will return the CID for the whole folder, and then each
@@ -17,9 +17,9 @@ async function pinFiles(paths: string[], names: string[]) {
   );
 
   // Clean up the uploaded files.
-  paths.forEach((x) => {
-    rmSync(x);
-  });
+  // paths.forEach((x) => {
+  //   rmSync(x);
+  // });
 
   return cid;
 }
@@ -45,11 +45,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       // We could do this more efficiently
-      let imagePaths = [files.largeAvatar.path];
+      let imagePaths = [files.largeAvatar];
       let imageNames = ["large_avatar", "small_avatar"];
 
       if (files.smallAvatar) {
-        imagePaths.push(files.smallAvatar.path);
+        imagePaths.push(files.smallAvatar);
       }
 
       const imagesCID = await pinFiles(
