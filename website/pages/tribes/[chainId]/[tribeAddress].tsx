@@ -9,12 +9,15 @@ import { useAtom } from "jotai";
 import { sfxAtom } from "../../../components/core/Navbar";
 import { useAccount, useContractRead, useContractWrite } from "wagmi";
 import tribeAbi from "../../../abis/tribe-abi.json";
+import useSendNotification from "../../../utils/useSendNotification";
 
 export default () => {
   const { chainId, tribeAddress } = useRouter().query;
   const [imgLoaded, setImgLoaded] = useState(false);
   const [audioEnabled] = useAtom(sfxAtom);
   const { address } = useAccount();
+
+  const { handleSendNotification, isSending } = useSendNotification();
 
   const {
     data: tribeData,
@@ -34,7 +37,7 @@ export default () => {
     }
   );
 
-  const { write: revokeMembership } = useContractWrite({
+  const { writeAsync: revokeMembership } = useContractWrite({
     address: tribeAddress?.toString() as any,
     abi: tribeAbi,
     functionName: "revoke",
@@ -44,7 +47,7 @@ export default () => {
     },
   });
 
-  const { write: acceptMembership } = useContractWrite({
+  const { writeAsync: acceptMembership } = useContractWrite({
     address: tribeAddress?.toString() as any,
     abi: tribeAbi,
     functionName: "accept",
@@ -119,6 +122,17 @@ export default () => {
             onClick={async () => {
               await acceptMembership({
                 args: [address],
+              }).then((txResult) => {
+                handleSendNotification(
+                  {
+                    title: "New tribe join request",
+                    body: `Somebody has requested to join your tribe`,
+                    icon: "https://social-signal.vercel.app/favicon-32x32.png",
+                    url: `https://goerli.etherscan.io/tx/${txResult.toString()}`,
+                    type: "transactional",
+                  },
+                  ownerAddress as string
+                );
               });
             }}
           >
@@ -131,6 +145,21 @@ export default () => {
               onClick={async () => {
                 await revokeMembership({
                   args: [address],
+                }).then((txResult) => {
+                  handleSendNotification(
+                    {
+                      title: isMember
+                        ? `Your tribe shrank`
+                        : `Request to join rescinded`,
+                      body: isMember
+                        ? `Somebody has left your tribe`
+                        : `Somebody has withdrawn their request to join`,
+                      icon: "https://social-signal.vercel.app/favicon-32x32.png",
+                      url: `https://goerli.etherscan.io/tx/${txResult.toString()}`,
+                      type: "transactional",
+                    },
+                    ownerAddress as string
+                  );
                 });
               }}
             >
@@ -186,8 +215,18 @@ export default () => {
                   ? () => {
                       revokeMembership({
                         args: [x.address],
+                      }).then((txResult) => {
+                        handleSendNotification(
+                          {
+                            title: "Membership revoked",
+                            body: `The owner of ${tribeData.displayName} has revoked your membership`,
+                            icon: "https://social-signal.vercel.app/favicon-32x32.png",
+                            url: `https://goerli.etherscan.io/tx/${txResult.hash.toString()}`,
+                            type: "transactional",
+                          },
+                          x.address
+                        );
                       });
-                      toastError(audioEnabled, "Not implemented yet.");
                     }
                   : null
               }
@@ -210,8 +249,18 @@ export default () => {
                   ? () => {
                       acceptMembership({
                         args: [x.address],
+                      }).then((txResult) => {
+                        handleSendNotification(
+                          {
+                            title: "Request accepted",
+                            body: `The owner of ${tribeData.displayName} has approved your request to join`,
+                            icon: "https://social-signal.vercel.app/favicon-32x32.png",
+                            url: `https://goerli.etherscan.io/tx/${txResult.hash.toString()}`,
+                            type: "transactional",
+                          },
+                          x.address
+                        );
                       });
-                      toastError(audioEnabled, "Not implemented yet.");
                     }
                   : null
               }
@@ -234,8 +283,18 @@ export default () => {
                   ? () => {
                       revokeMembership({
                         args: [x.address],
+                      }).then((txResult) => {
+                        handleSendNotification(
+                          {
+                            title: "Invite revoked",
+                            body: `The owner of ${tribeData.displayName} has revoked your invitation`,
+                            icon: "https://social-signal.vercel.app/favicon-32x32.png",
+                            url: `https://goerli.etherscan.io/tx/${txResult.hash.toString()}`,
+                            type: "transactional",
+                          },
+                          x.address
+                        );
                       });
-                      toastError(audioEnabled, "Not implemented yet.");
                     }
                   : null
               }

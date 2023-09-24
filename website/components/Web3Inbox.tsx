@@ -123,7 +123,7 @@ export const Web3Inbox = () => {
             notification: {
               title: "New block",
               body: blockNumber.toString(),
-              icon: `${window.location.origin}/eth-glyph-colored.png`,
+              icon: "https://social-signal.vercel.app/favicon-32x32.png",
               url: `https://etherscan.io/block/${blockNumber.toString()}`,
               type: "transactional",
             },
