@@ -98,7 +98,12 @@ export default () => {
     return <Skeleton width={500} height={728} />;
   }
 
-  console.log(tribeData, { memberState, address });
+  console.log(tribeData, {
+    memberState,
+    address,
+    ownerAddress,
+    isOwner,
+  });
 
   return (
     <div className="flex flex-col gap-y-8">

@@ -1,12 +1,13 @@
-import { ContractTransaction, ethers } from "ethers";
+import { Contract, ContractTransaction, ethers } from "ethers";
+import tribeAbi from "../abis/tribe-abi.json";
 
-export const chainConfig = {
-  5 : {
-    name: "goerli",
-    rpc: `https://goerli.infura.io/v3/${process.env.INFURA_KEY}`,
-    tribeFactoryABI: ""
-  }
-}
+// export const chainConfig = {
+//   5 : {
+//     name: "goerli",
+//     rpc: `https://goerli.infura.io/v3/${process.env.INFURA_KEY}`,
+//     tribeFactoryABI: ""
+//   }
+// }
 
 const tribeFactoryABI = [
   {
@@ -91,12 +92,20 @@ export async function createTribe(
       connectedWallet
     );
 
-    // Send transaction
+    const tribeAddress = new Promise((resolve) => {
+      contract.on("TribeFounded", async (arg1, event) => {
+        const receivedAddress = arg1;
+        const tribeContract = new Contract(receivedAddress, tribeAbi, provider);
 
-    let tribeAddress;
-    contract.on("TribeFounded", (arg1, event) => { 
-      tribeAddress = arg1;
-  });
+        if (
+          (await tribeContract.owner()) === owner &&
+          (await tribeContract.tokenURI(0)) === baseURI
+        ) {
+          console.log("MATCHED", receivedAddress);
+          resolve(receivedAddress);
+        }
+      });
+    });
 
     const tx: ContractTransaction = await contract.createTribe(
       owner,
@@ -104,12 +113,8 @@ export async function createTribe(
       ensName
     );
 
-    while (tribeAddress === undefined) {
-      await new Promise(r => setTimeout(r, 1000));
-    }
-
     // Wait for the transaction to be mined
-    return { tx, tribeAddress };
+    return { tx, tribeAddress: await tribeAddress };
   } catch (error) {
     console.error("Error in createTribe:", error);
     throw error;

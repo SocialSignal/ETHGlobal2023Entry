@@ -136,6 +136,13 @@ export const Web3Inbox = () => {
   return (
     <div>
       <h3 className="self-center text-center mb-6">Web3Inbox hooks</h3>
+      <div>
+        {JSON.stringify(
+          { isSubscribed, isSubscribing, isUnsubscribing },
+          null,
+          4
+        )}
+      </div>
 
       <div className="flex flex-col gap-4">
         {isSubscribed ? (
@@ -209,9 +216,9 @@ export const Web3Inbox = () => {
           // <Accordion defaultIndex={[1]} allowToggle mt={10} rounded="xl">
           <div className="mt-10">
             {/* <Subscription />
-    <Messages />
-    <Preferences />
-    <Subscribers /> */}
+            <Messages />
+            <Preferences />
+            <Subscribers /> */}
           </div>
         )}
       </div>

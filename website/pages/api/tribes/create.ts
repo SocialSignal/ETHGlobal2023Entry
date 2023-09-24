@@ -92,7 +92,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       );
 
       // const txHash = "0xa40c0b13858f3eba60902adb6bcdc5ec78151ab0538a5c64ecb820d8aa72e839"
-      return res.json({ address: createTribeResult.tx });
+      return res.json(createTribeResult);
     } catch (e) {
       console.error(e);
       return res
