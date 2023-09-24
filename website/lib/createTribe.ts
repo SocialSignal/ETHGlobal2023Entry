@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
   
-const tribeFactoryABI = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"tribeAddress","type":"address"}],"name":"TribeFounded","type":"event"},{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"},{"internalType":"address","name":"owner","type":"address"},{"internalType":"string","name":"nftImageURI","type":"string"},{"internalType":"string","name":"ensName","type":"string"}],"name":"createTribe","outputs":[{"internalType":"address","name":"tribeAddress","type":"address"}],"stateMutability":"nonpayable","type":"function"}]
+const tribeFactoryABI = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"tribeAddress","type":"address"}],"name":"TribeFounded","type":"event"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"string","name":"nftImageURI","type":"string"},{"internalType":"string","name":"ensName","type":"string"}],"name":"createTribe","outputs":[{"internalType":"address","name":"tribeAddress","type":"address"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"implementationAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"implementationAddress_","type":"address"}],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 
 // This function should be server-side only to securely use the PRIVATE_KEY environment variable
-export async function createTribe(chainId: number, name: string, symbol: string, owner: string, baseURI: string, ensName: string) {
+export async function createTribe(networkName: string, owner: string, baseURI: string, ensName: string) {
   try {
     // Import the private key from environment variables
     const privateKey = process.env.PRIVATE_KEY;
@@ -22,10 +22,10 @@ export async function createTribe(chainId: number, name: string, symbol: string,
 
     // Create an instance of the Contract class
     // TODO make it multichain
-    const contract = new ethers.Contract("0x843C1Cf1DAfB56857b698DB3fA84C1f63bf89EA6", tribeFactoryABI, connectedWallet);
+    const contract = new ethers.Contract("0x50A28a0d610733D261FCe2e315c8a58e30B0a9ac", tribeFactoryABI, connectedWallet);
 
     // Send transaction
-    const tx = await contract.createTribe(name, symbol, owner, baseURI, ensName);
+    const tx = await contract.createTribe(owner, baseURI, ensName);
 
     // Wait for the transaction to be mined
     return tx.hash;

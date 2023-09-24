@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { toastError } from "../../components/Notifications";
 import { sfxAtom } from "../../components/core/Navbar";
 import { useAtom } from "jotai";
-import { useAccount, useEnsName } from "wagmi";
+import { useAccount } from "wagmi";
 import { useTribeENSRepair } from "../../components/hooks/useTribeENSRepair";
 import { ZeroAddress } from "ethers";
 
@@ -53,6 +53,7 @@ export default () => {
   const [largeAvatar, setLargeAvatar] = useState<File>();
   const [smallAvatar, setSmallAvatar] = useState<File>();
   const lastAudioRef = useRef<HTMLAudioElement>();
+  const { address } = useAccount();
 
   const { configureTribeRecords } = useTribeENSRepair();
 
@@ -97,6 +98,7 @@ export default () => {
 
       if (description) data.set("description", description);
       if (smallAvatar) data.set("smallAvatar", smallAvatar);
+      if (address) data.set("owner", address); // TODO make this mandatory
 
       // const res = await fetch("/api/tribes/create", {
       //   method: "POST",

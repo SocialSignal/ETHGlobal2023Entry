@@ -72,11 +72,18 @@ export default () => {
 
   return (
     <div className="flex flex-col gap-y-8">
-      <div>Edit Tribe</div>
-      <div>Send Invite</div>
-      <div>Request to Join</div>
-      <div>Cancel Request to Join</div>
-      <div>Leave Tribe</div>
+      {isOwner ? (
+        <>
+          <div>Edit Tribe</div>
+          <div>Send Invite</div>
+        </>
+      ) : (
+        <>
+          <div>Request to Join</div>
+          <div>Cancel Request to Join</div>
+          <div>Leave Tribe</div>
+        </>
+      )}
       <div>
         <div className="roboto-condensed">
           {chainId}:{tribeAddress}
