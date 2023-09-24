@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@adraffy/ens-normalize": "^1.10.0",
+    "@airstack/node": "^0.0.5",
     "@chakra-ui/icons": "^2.0.17",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",

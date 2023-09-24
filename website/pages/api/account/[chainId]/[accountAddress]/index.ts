@@ -54,6 +54,8 @@ export default async function getAccount(
     accountAddress = req.query.accountAddress.toString();
   }
 
+  const mockViewerAddress = "0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5".toLowerCase();
+
   const requestData: RequestData = {
     chainId: chainId,
     address: accountAddress.toLowerCase(),
