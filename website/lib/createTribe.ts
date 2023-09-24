@@ -1,5 +1,13 @@
 import { ContractTransaction, ethers } from "ethers";
 
+export const chainConfig = {
+  5 : {
+    name: "goerli",
+    rpc: `https://goerli.infura.io/v3/${process.env.INFURA_KEY}`,
+    tribeFactoryABI: ""
+  }
+}
+
 const tribeFactoryABI = [
   {
     anonymous: false,
@@ -69,9 +77,9 @@ export async function createTribe(
 
     // Connect to Ethereum provider (e.g., Infura)
     // TODO make it multichain
-    const provider = new ethers.JsonRpcProvider(
-      // `https://goerli.infura.io/v3/${process.env.INFURA_KEY}`
-      "http://127.0.0.1:8545"
+    const provider = new ethers.providers.JsonRpcProvider(
+       `https://goerli.infura.io/v3/${process.env.INFURA_KEY}`
+      // "http://127.0.0.1:8545"
     );
     const connectedWallet = wallet.connect(provider);
 
@@ -85,19 +93,20 @@ export async function createTribe(
 
     // Send transaction
 
-    const tribeAddress = await (contract.callStatic as any).createTribe(
-      owner,
-      baseURI,
-      ensName
-    );
+    let tribeAddress;
+    contract.on("TribeFounded", (arg1, event) => { 
+      tribeAddress = arg1;
+  });
+
     const tx: ContractTransaction = await contract.createTribe(
       owner,
       baseURI,
       ensName
     );
 
-    console.log({ tribeAddress }, Object.keys(tribeAddress));
-    // const result = await (tx as any).wait(0);
+    while (tribeAddress === undefined) {
+      await new Promise(r => setTimeout(r, 3000));
+    }
 
     // Wait for the transaction to be mined
     return { tx, tribeAddress };
