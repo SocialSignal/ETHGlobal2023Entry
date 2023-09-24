@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { SocialStorySummary, TribeDetail, TribeReference } from "../../../../../types/types";
 import { buildValueReferences } from "../../../../../lib/shared/utils";
-import { buildMockAccountSummary, buildMockTribeSummary } from "../../../../../lib/api/utils";
+import { buildMockAccountSummary, buildMockTribeSummary, getProviders } from "../../../../../lib/api/utils";
 
 // TODO: validation with zod
 type RequestData = {
@@ -30,7 +30,7 @@ type ErrorInfo = {
     error: string;
 };
 
-export default function getTribeDetail(
+export default async function getTribeDetail(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData | ErrorInfo>
 ) {
@@ -57,16 +57,18 @@ export default function getTribeDetail(
 
   console.log(`/api/tribes/${requestData.tribeId.chainId}/${requestData.tribeId.address}: viewer: ${requestData.viewer}`);
 
+  const providers = await getProviders(chainId);
+
   const values = buildValueReferences("Web3, Decentralization, LOVE, Environment", null);
   const tribeSummary = buildMockTribeSummary(1, "0x283af0b28c62c092c9727f1ee09c02ca627eb7f5", "Tribe 1", "0xd8da6bf26964af9d7eed9e03e53415d37aa96045", 123, values);
 
   const curatedSocial: SocialStorySummary[] = []
-  const account1 = buildMockAccountSummary("0x1a199654959140e5c1a2f4135faa7ba2748939c5", tribeSummary, curatedSocial, values);
-  const account2 = buildMockAccountSummary("0x76a6d08b82034b397e7e09dae4377c18f132bbb8", null, curatedSocial, values);
-  const account3 = buildMockAccountSummary("0xfe89cc7abb2c4183683ab71653c4cdc9b02d44b7", null, curatedSocial, values);
-  const account4 = buildMockAccountSummary("0x0364c42a15c2cc3073eba1e11ee5ab0c6a1b5b40", null, curatedSocial, values);
-  const account5 = buildMockAccountSummary("0xa9350e3b4ad3f22bab136cfef999c132ead3bca3", null, curatedSocial, values);
-  const account6 = buildMockAccountSummary("0xfa45c6991a2c3d74ada3a279e21135133ce3da8a", null, curatedSocial, values);
+  const account1 = await buildMockAccountSummary(providers, "0x1a199654959140e5c1a2f4135faa7ba2748939c5", tribeSummary, values);
+  const account2 = await buildMockAccountSummary(providers, "0x76a6d08b82034b397e7e09dae4377c18f132bbb8", null, values);
+  const account3 = await buildMockAccountSummary(providers, "0xfe89cc7abb2c4183683ab71653c4cdc9b02d44b7", null, values);
+  const account4 = await buildMockAccountSummary(providers, "0x0364c42a15c2cc3073eba1e11ee5ab0c6a1b5b40", null, values);
+  const account5 = await buildMockAccountSummary(providers, "0xa9350e3b4ad3f22bab136cfef999c132ead3bca3", null, values);
+  const account6 = await buildMockAccountSummary(providers, "0xfa45c6991a2c3d74ada3a279e21135133ce3da8a", null, values);
 
   const tribe: TribeDetail = {
     ...tribeSummary,

@@ -7,14 +7,14 @@ import { GenericRow } from "../../../components/GenericRow";
 import { toastError } from "../../../components/Notifications";
 import { useAtom } from "jotai";
 import { sfxAtom } from "../../../components/core/Navbar";
-import { useContractWrite } from "wagmi";
-import { useEthersSigner } from "../../../components/hooks/useEthersSigner";
+import { useAccount, useContractRead, useContractWrite } from "wagmi";
+import tribeAbi from "../../../abis/tribe-abi.json";
 
 export default () => {
   const { chainId, tribeAddress } = useRouter().query;
   const [imgLoaded, setImgLoaded] = useState(false);
   const [audioEnabled] = useAtom(sfxAtom);
-  const signer = useEthersSigner();
+  const { address } = useAccount();
 
   const {
     data: tribeData,
@@ -35,8 +35,8 @@ export default () => {
   );
 
   const { write: revokeMembership } = useContractWrite({
-    abi: null,
-    signer,
+    address: tribeAddress?.toString() as any,
+    abi: tribeAbi,
     functionName: "revoke",
     onError: (e) => {
       console.error(e);
@@ -44,44 +44,94 @@ export default () => {
     },
   });
 
-  const { write: cancelInvite } = useContractWrite({
-    abi: null,
-    signer,
-    functionName: "cancelInvite",
+  const { write: acceptMembership } = useContractWrite({
+    address: tribeAddress?.toString() as any,
+    abi: tribeAbi,
+    functionName: "accept",
     onError: (e) => {
       console.error(e);
       toastError(`${e.name}: ${e.message}`);
     },
   });
 
-  const { write: confirmRequest } = useContractWrite({
-    abi: null,
-    signer,
-    functionName: "confirmRequest",
+  const { data: isMember } = useContractRead({
+    address: tribeAddress?.toString() as any,
+    abi: tribeAbi,
+    functionName: "isMember",
+    args: [address],
+    enabled: !!address,
     onError: (e) => {
       console.error(e);
       toastError(`${e.name}: ${e.message}`);
     },
   });
+
+  const { data: ownerAddress } = useContractRead({
+    address: tribeAddress?.toString() as any,
+    abi: tribeAbi,
+    functionName: "owner",
+    args: [],
+    onError: (e) => {
+      console.error(e);
+      toastError(`${e.name}: ${e.message}`);
+    },
+  });
+
+  const { data: memberState } = useContractRead({
+    address: tribeAddress?.toString() as any,
+    abi: tribeAbi,
+    functionName: "getMemberState",
+    args: [address],
+    enabled: !!address,
+    onError: (e) => {
+      console.error(e);
+      toastError(`${e.name}: ${e.message}`);
+    },
+  });
+
+  const isOwner =
+    address != null &&
+    (ownerAddress as string | undefined)?.toLowerCase() ===
+      address?.toLowerCase();
 
   if (!tribeData) {
     return <Skeleton width={500} height={728} />;
   }
 
-  console.log(tribeData);
+  console.log(tribeData, { memberState, address });
 
   return (
     <div className="flex flex-col gap-y-8">
       {isOwner ? (
         <>
-          <div>Edit Tribe</div>
-          <div>Send Invite</div>
+          <button className="btn">Edit Tribe</button>
+          <button className="btn">Send Invite</button>
         </>
       ) : (
         <>
-          <div>Request to Join</div>
-          <div>Cancel Request to Join</div>
-          <div>Leave Tribe</div>
+          <button
+            className="btn"
+            onClick={async () => {
+              await acceptMembership({
+                args: [address],
+              });
+            }}
+          >
+            Request to Join
+          </button>
+
+          {isMember ? (
+            <button
+              className="btn"
+              onClick={async () => {
+                await revokeMembership({
+                  args: [address],
+                });
+              }}
+            >
+              {isMember ? "Leave Tribe" : "Cancel Request to Join"}
+            </button>
+          ) : null}
         </>
       )}
       <div>
@@ -126,10 +176,16 @@ export default () => {
               key={i}
               user={x}
               actionLabel={"Revoke Membership"}
-              onAction={() => {
-                revokeMembership(x.address);
-                toastError(audioEnabled, "Not implemented yet.");
-              }}
+              onAction={
+                isOwner
+                  ? () => {
+                      revokeMembership({
+                        args: [x.address],
+                      });
+                      toastError(audioEnabled, "Not implemented yet.");
+                    }
+                  : null
+              }
             ></UserRow>
           ))}
         </div>
@@ -144,10 +200,16 @@ export default () => {
               key={i}
               user={x}
               actionLabel={"Accept Request"}
-              onAction={() => {
-                confirmRequest(x.address);
-                toastError(audioEnabled, "Not implemented yet.");
-              }}
+              onAction={
+                isOwner
+                  ? () => {
+                      acceptMembership({
+                        args: [x.address],
+                      });
+                      toastError(audioEnabled, "Not implemented yet.");
+                    }
+                  : null
+              }
             ></UserRow>
           ))}
         </div>
@@ -162,10 +224,16 @@ export default () => {
               key={i}
               user={x}
               actionLabel={"Cancel Invite"}
-              onAction={() => {
-                cancelInvite(x.address);
-                toastError(audioEnabled, "Not implemented yet.");
-              }}
+              onAction={
+                isOwner
+                  ? () => {
+                      revokeMembership({
+                        args: [x.address],
+                      });
+                      toastError(audioEnabled, "Not implemented yet.");
+                    }
+                  : null
+              }
             ></UserRow>
           ))}
         </div>

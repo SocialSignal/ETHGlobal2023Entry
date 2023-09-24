@@ -6,7 +6,7 @@ export const setResolver = async (
   resolver: string,
   signer: Signer
 ) => {
-  let node = ethers.namehash(name);
+  let node = ethers.utils.namehash(name);
   const res = await getNamewrapperContract(signer).setResolver(node, resolver, {
     gasLimit: 100000,
   });

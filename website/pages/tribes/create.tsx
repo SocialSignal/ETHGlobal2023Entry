@@ -6,13 +6,7 @@ import { sfxAtom } from "../../components/core/Navbar";
 import { useAtom } from "jotai";
 import { useAccount } from "wagmi";
 import { useTribeENSRepair } from "../../components/hooks/useTribeENSRepair";
-import {
-  Provider,
-  Signer,
-  Transaction,
-  TransactionReceipt,
-  ZeroAddress,
-} from "ethers";
+import { zeroAddress } from "viem";
 
 const networkIds = {
   gnosis: 100,
@@ -39,9 +33,9 @@ const networkOptions = [
   "polygon",
 ];
 
-function waitForTx(txHash: string, provider: Provider) {
+function waitForTx(txHash: string, provider: any) {
   return new Promise<void>((resolve, reject) => {
-    provider.once(txHash, (transactionReceipt) => {
+    provider.once(txHash, (transactionReceipt: any) => {
       console.log(
         `Completed with ${transactionReceipt.confirmations} confirmations. `,
         { transactionReceipt }
@@ -53,7 +47,6 @@ function waitForTx(txHash: string, provider: Provider) {
 }
 
 export default () => {
-  const router = useRouter();
   const [audioEnabled] = useAtom(sfxAtom);
   const [actionMessage, setActionMessage] = useState<string>();
 
@@ -144,7 +137,7 @@ export default () => {
             tribeId: {
               chainId: network,
               // Get this from CreateTribe
-              address: ZeroAddress,
+              address: zeroAddress,
             },
             // smallAvatarIPFS,
           } as any);
