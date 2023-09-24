@@ -1,10 +1,10 @@
-import { ZeroAddress } from "ethers";
 import { getResolver } from "../../lib/ens-scripts/check-resolver";
 import { setResolver } from "../../lib/ens-scripts/set-public-resolver";
 import { getResolverContract } from "../../lib/ens-scripts/utils/contracts";
 import { useEthersSigner } from "./useEthersSigner";
 import { setTribeRecords } from "../../lib/ens-scripts/set-tribe-records";
 import { TribeSummary } from "../../types/types";
+import { zeroAddress } from "viem";
 
 export const useTribeENSRepair = () => {
   const signer = useEthersSigner();
@@ -24,7 +24,7 @@ export const useTribeENSRepair = () => {
     console.log("Current resolver: ", currentResolver);
 
     // 2. set resolver if the result was 0x0
-    if (currentResolver == ZeroAddress) {
+    if (currentResolver == zeroAddress) {
       const res = await setResolver(
         ensName,
         await getResolverContract(signer).getAddress(),

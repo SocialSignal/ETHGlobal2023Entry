@@ -19,7 +19,7 @@ export const setMemberRecords = async (
   records: TribeRecordsInputs,
   signer: Signer
 ) => {
-  let node = ethers.namehash(name);
+  let node = ethers.utils.namehash(name);
   const resolver = getResolverContract(signer);
   const calldata = buildMulticallData(node, records, resolver);
   const res = await resolver.multicall(calldata);

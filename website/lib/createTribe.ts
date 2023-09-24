@@ -69,7 +69,7 @@ export async function createTribe(
 
     // Connect to Ethereum provider (e.g., Infura)
     // TODO make it multichain
-    const provider = new ethers.JsonRpcProvider(
+    const provider = new ethers.providers.JsonRpcProvider(
       // `https://goerli.infura.io/v3/${process.env.INFURA_KEY}`
       "http://127.0.0.1:8545"
     );
