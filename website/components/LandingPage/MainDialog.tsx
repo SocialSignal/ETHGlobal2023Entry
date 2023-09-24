@@ -28,7 +28,7 @@ export default function MainDialog({ onPlayGlobalSound }: any) {
       }}
     >
       <div className="text-black shadow-inner flex flex-col min-w-[540px] max-w-[940px] bg-[#E0B779] px-8 py-10 rounded-xl">
-        <h1 className="text-3xl font-bold underline">
+        <h1 className="text-5xl font-bold underline">
           <Link
             href="/tribes/create"
             onClick={(e) => {
@@ -52,11 +52,8 @@ export default function MainDialog({ onPlayGlobalSound }: any) {
               } catch (e) {}
             }}
           >
-            Create tribe!
+            Make Your Tribe
           </Link>
-        </h1>
-        <h1 className="text-3xl font-bold underline">
-          <a href="/tribes">See your tribes</a>
         </h1>
       </div>
       <TribeList />

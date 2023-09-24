@@ -13,14 +13,14 @@ function useSendNotification() {
   const [audioEnabled] = useAtom(sfxAtom);
 
   const handleSendNotification = useCallback(
-    async (notification: INotification) => {
+    async (notification: INotification, accountDestination?: string) => {
       if (!account) {
         return;
       }
       setIsSending(true);
       try {
         const { success, message } = await sendNotification({
-          accounts: [account],
+          accounts: [accountDestination || account],
           notification,
         });
         setIsSending(false);

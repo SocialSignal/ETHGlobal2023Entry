@@ -10,6 +10,9 @@ import { useAccount, useSignMessage, usePublicClient } from "wagmi";
 import { sendNotification } from "../utils/fetchNotify";
 import useSendNotification from "../utils/useSendNotification";
 import "@web3inbox/widget-react/dist/compiled.css";
+import Messages from "./Messages";
+import Subscribers from "./Subscribers";
+import Subscription from "./Subscription";
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
 const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN as string;
@@ -44,6 +47,20 @@ export const Web3Inbox = () => {
     identityKey,
   } = useW3iAccount();
 
+  const { address } = useAccount({
+    onDisconnect: () => {
+      setAccount("");
+    },
+  });
+
+  const { signMessage } = useSignalSourceSignMessage();
+
+  // We need to set the account as soon as the user is connected
+  useEffect(() => {
+    if (!Boolean(address)) return;
+    setAccount(`eip155:1:${address}`);
+  }, [signMessage, address, setAccount]);
+
   const {
     subscribe,
     unsubscribe,
@@ -58,8 +75,6 @@ export const Web3Inbox = () => {
   const [lastBlock, setLastBlock] = useState<string>();
   const [isBlockNotificationEnabled, setIsBlockNotificationEnabled] =
     useState(true);
-
-  const { signMessage } = useSignalSourceSignMessage();
 
   const handleRegistration = useCallback(async () => {
     if (!account) return;
@@ -108,7 +123,7 @@ export const Web3Inbox = () => {
             notification: {
               title: "New block",
               body: blockNumber.toString(),
-              icon: `${window.location.origin}/eth-glyph-colored.png`,
+              icon: "https://social-signal.vercel.app/favicon-32x32.png",
               url: `https://etherscan.io/block/${blockNumber.toString()}`,
               type: "transactional",
             },
@@ -212,15 +227,14 @@ export const Web3Inbox = () => {
           // </Tooltip>
         )}
 
-        {isSubscribed && (
-          // <Accordion defaultIndex={[1]} allowToggle mt={10} rounded="xl">
-          <div className="mt-10">
-            {/* <Subscription />
-            <Messages />
-            <Preferences />
-            <Subscribers /> */}
-          </div>
-        )}
+        {/* {isSubscribed && ( */}
+        <div className="mt-10">
+          <Subscription />
+          <Messages />
+          {/* <Preferences /> */}
+          <Subscribers />
+        </div>
+        {/* )} */}
       </div>
     </div>
   );
