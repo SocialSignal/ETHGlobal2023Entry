@@ -1,8 +1,8 @@
 import toast from "react-hot-toast";
 let errorSfx: any = null;
 
-export const toastError = ({ audioEnabled }: any, ...props: any) => {
-  if (audioEnabled) {
+export const toastError = (audioEnabled: boolean | unknown, ...props: any) => {
+  if (audioEnabled === true) {
     try {
       if (errorSfx == null) errorSfx = new Audio("/sfx/error.mp3");
       errorSfx.currentTime = 0;

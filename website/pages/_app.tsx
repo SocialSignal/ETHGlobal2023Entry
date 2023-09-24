@@ -1,6 +1,5 @@
 import type { AppProps } from "next/app";
-import { WagmiConfig, useAccount } from "wagmi";
-import { mainnet } from "wagmi/chains";
+import { WagmiConfig, mainnet } from "wagmi";
 import Footer from "../components/core/Footer";
 // import "@web3inbox/widget-react/dist/compiled.css";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -13,6 +12,7 @@ import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { SkeletonTheme } from "react-loading-skeleton";
 import AuthWrapper from "../components/AuthWrapper";
+import { goerli } from "viem/chains";
 
 // 1. Get projectID at https://cloud.walletconnect.com
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
@@ -21,7 +21,7 @@ if (!projectId) {
 }
 
 // 2. Configure Web3Modal
-const chains = [mainnet];
+const chains = [goerli];
 const wagmiConfig = defaultWagmiConfig({
   chains,
   projectId,
@@ -37,6 +37,7 @@ createWeb3Modal({
   themeVariables: {
     "--w3m-font-family": "Roboto, sans-serif",
     "--w3m-accent": "#56B5BF",
+    "--w3m-z-index": 100,
   } as any,
 });
 
@@ -54,7 +55,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <div>
                   <Navbar />
                 </div>
-                <div className="p-10 z-10">
+                <div className="p-10 z-0">
                   <div className="flex flex-col justify-center items-center">
                     <Component {...pageProps} />
                   </div>

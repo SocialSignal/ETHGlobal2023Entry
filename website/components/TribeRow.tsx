@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
+import { GenericRow } from "./GenericRow";
 
 export const TribeRow = ({
   tribeSummary: {
@@ -14,8 +15,7 @@ export const TribeRow = ({
   const router = useRouter();
 
   return (
-    <div
-      className="shadow-inner flex flex-col bg-[#E0B779] rounded-xl px-4 py-1 text-black cursor-pointer hover:shadow-2xl hover:scale-[101%]"
+    <GenericRow
       onClick={() => {
         router.push(`/tribes/${tribeId.chainId}/${tribeId.address}`);
       }}
@@ -42,6 +42,6 @@ export const TribeRow = ({
       <div>{avatar}</div>
       <div>{badge}</div>
       <div>{memberCount}</div> */}
-    </div>
+    </GenericRow>
   );
 };

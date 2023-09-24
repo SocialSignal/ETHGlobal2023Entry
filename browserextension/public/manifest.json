@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Social Signal Integrated Web Viewer",
+  "version": "1.0",
+  "content_scripts": [
+    {
+      "matches": ["https://etherscan.io/*", "https://*.etherscan.io/*"],
+      "js": ["js/vendor.js", "js/content_script.js"],
+      "css": ["tippy.css"]
+    }
+  ],
+  "icons": {
+    "128": "icon.png"
+  },
+  "background": {
+    "service_worker": "js/background.js"
+  },
+  "permissions": ["storage"],
+  "host_permissions": ["<all_urls>"]
+}

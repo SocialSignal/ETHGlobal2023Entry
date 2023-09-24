@@ -18,7 +18,6 @@ export default function AuthWrapper({ children }: any) {
       setAccount("");
     },
   });
-  console.log({ account, address });
 
   // We need to set the account as soon as the user is connected
   useEffect(() => {

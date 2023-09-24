@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { TribeDetail, TribeReference } from "../../../../../types/types";
+import { SocialStorySummary, TribeDetail, TribeReference } from "../../../../../types/types";
 import { buildValueReferences } from "../../../../../lib/shared/utils";
 import { buildMockAccountSummary, buildMockTribeSummary, getProviders } from "../../../../../lib/api/utils";
 
@@ -62,6 +62,7 @@ export default async function getTribeDetail(
   const values = buildValueReferences("Web3, Decentralization, LOVE, Environment", null);
   const tribeSummary = buildMockTribeSummary(1, "0x283af0b28c62c092c9727f1ee09c02ca627eb7f5", "Tribe 1", "0xd8da6bf26964af9d7eed9e03e53415d37aa96045", 123, values);
 
+  const curatedSocial: SocialStorySummary[] = []
   const account1 = await buildMockAccountSummary(providers, "0x1a199654959140e5c1a2f4135faa7ba2748939c5", tribeSummary, values);
   const account2 = await buildMockAccountSummary(providers, "0x76a6d08b82034b397e7e09dae4377c18f132bbb8", null, values);
   const account3 = await buildMockAccountSummary(providers, "0xfe89cc7abb2c4183683ab71653c4cdc9b02d44b7", null, values);

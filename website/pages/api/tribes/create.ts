@@ -3,6 +3,7 @@ import { Web3Storage, getFilesFromPath } from "web3.storage";
 import formidable from "formidable-serverless";
 import { rmSync, writeFileSync } from "fs";
 import { v4 as uuidv4 } from "uuid";
+import { createTribe } from "../../../lib/createTribe";
 
 async function pinFiles(paths: string[], names: string[]) {
   const storage = new Web3Storage({ token: process.env.WEB3_STORAGE_API_KEY! });
@@ -63,6 +64,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         smallImage: files.smallAvatar
           ? `ipfs://${imagesCID}/${imageNames[1]}`
           : null,
+        tribeValues: fields.tribeValues.split(",").map((x: string) => x.trim()),
 
         // We can do this if we want the values to appear in opensea..
         // attributes: values.map(x => {
@@ -77,7 +79,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const tmpPath = `${uuidv4()}.json`;
       writeFileSync(tmpPath, JSON.stringify(contractMetadata));
       const contractMetadataCID = await pinFiles([tmpPath], ["metadata.json"]);
-      return res.redirect(302, `/tribes/${contractMetadataCID}`);
+
+      const baseURI = `ipfs://${contractMetadataCID}/metadata.json`;
+      const owner = fields.owner.trim();
+      const ensName = fields.ensName.trim();
+
+      const createTribeResult = await createTribe(
+        parseInt(fields.chainId, 10),
+        owner,
+        baseURI,
+        ensName
+      );
+
+      // const txHash = "0xa40c0b13858f3eba60902adb6bcdc5ec78151ab0538a5c64ecb820d8aa72e839"
+      return res.json({ address: createTribeResult.tx });
     } catch (e) {
       console.error(e);
       return res

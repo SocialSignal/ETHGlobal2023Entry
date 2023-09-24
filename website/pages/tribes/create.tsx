@@ -4,25 +4,90 @@ import { useRef, useState } from "react";
 import { toastError } from "../../components/Notifications";
 import { sfxAtom } from "../../components/core/Navbar";
 import { useAtom } from "jotai";
+import { useAccount } from "wagmi";
+import { useTribeENSRepair } from "../../components/hooks/useTribeENSRepair";
+import { Provider, ZeroAddress } from "ethers";
+
+const networkIds = {
+  gnosis: 100,
+  arbitrum: 42161,
+  scroll: 534352,
+  base: 8453,
+  mantle: 5000,
+  celo: 42220,
+  linea: 59144,
+  neonevm: 1,
+  polygon: 137,
+  zkSync: 324,
+};
+
+const networkOptions = [
+  "gnosis",
+  "arbitrum",
+  "scroll",
+  "base",
+  "mantle",
+  "celo",
+  "linea",
+  "neonevm",
+  "polygon",
+];
+
+function waitForTx(txHash: string, provider: Provider) {
+  return new Promise<void>((resolve, reject) => {
+    provider.once(txHash, (transactionReceipt) => {
+      console.log(
+        `Completed with ${transactionReceipt.confirmations} confirmations. `,
+        { transactionReceipt }
+      );
+
+      resolve();
+    });
+  });
+}
 
 export default () => {
-  const router = useRouter();
   const [audioEnabled] = useAtom(sfxAtom);
+  const [actionMessage, setActionMessage] = useState<string>();
+
+  const { address, connector } = useAccount();
+
+  // const {provider} = useProvider();
+  // const { data: primaryENS } = useEnsName({
+  //   address,
+  // });
+
+  // console.log({ address, primaryENS });
 
   const [isActionInProgress, setIsActionInProgress] = useState(false);
   const [name, setName] = useState<string>();
+  const [network, setNetwork] = useState<number>();
   const [description, setDescription] = useState<string>();
+  const [ensName, setENSName] = useState<string>();
+  const [tribeValues, setTribeValues] = useState<string>();
   const [largeAvatar, setLargeAvatar] = useState<File>();
   const [smallAvatar, setSmallAvatar] = useState<File>();
   const lastAudioRef = useRef<HTMLAudioElement>();
 
+  const { configureTribeRecords } = useTribeENSRepair();
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    setActionMessage("");
     e.preventDefault();
     if (!largeAvatar) {
       toastError(audioEnabled, "Large avatar is required");
       return;
     } else if (!name?.trim().length) {
       toastError(audioEnabled, "Name is required");
+      return;
+    } else if (!network) {
+      toastError(audioEnabled, "Network is required");
+      return;
+    } else if (!ensName?.trim().length) {
+      toastError(audioEnabled, "ensName is required");
+      return;
+    } else if (!tribeValues?.trim().length) {
+      toastError(audioEnabled, "Tribe values are required");
       return;
     }
 
@@ -42,18 +107,52 @@ export default () => {
       const data = new FormData();
       data.set("largeAvatar", largeAvatar);
       data.set("name", name);
+      data.set("chainId", network.toString());
+      data.set("ensName", ensName);
+      data.set("tribeValues", tribeValues);
 
       if (description) data.set("description", description);
       if (smallAvatar) data.set("smallAvatar", smallAvatar);
+      if (address) data.set("owner", address); // TODO make this mandatory
 
+      setActionMessage("Uploading data");
       const res = await fetch("/api/tribes/create", {
         method: "POST",
         body: data,
       });
 
       if (!res.ok) {
-        toastError(audioEnabled, await res.text());
+        toastError(
+          audioEnabled,
+          (await res.text()) || "Failed to create tribe"
+        );
       } else {
+        try {
+          setActionMessage("Configuring ENS");
+          await configureTribeRecords(ensName, {
+            displayName: name,
+            values: tribeValues?.split(",").map((x) => x.trim()),
+            description: description || "",
+            // largeAvatarIPFS,
+            tribeId: {
+              chainId: network,
+              // Get this from CreateTribe
+              address: ZeroAddress,
+            },
+            // smallAvatarIPFS,
+          } as any);
+        } catch (e) {
+          toastError(
+            audioEnabled,
+            "Failed to set ENS records. Tribe was created, but please try to repair ENS later."
+          );
+        }
+
+        const { address: tribeAddress } = await res.json();
+
+        console.log({ tribeAddress });
+        await waitForTx(tribeAddress.hash, await connector!.getProvider());
+
         try {
           if (lastAudioRef.current) lastAudioRef.current.pause();
 
@@ -65,7 +164,7 @@ export default () => {
           }
         } catch (e) {}
 
-        router.push(res.url);
+        // router.push(`/tribes/${network}/${tribeAddress}}`);
       }
     } catch (e: any) {
       console.error(e);
@@ -91,7 +190,7 @@ export default () => {
         <input
           type="text"
           placeholder="tribe name"
-          className="input input-bordered input-primary w-full max-w-xs"
+          className="text-white input input-bordered input-primary w-full max-w-xs"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -104,10 +203,35 @@ export default () => {
           </span>
         </label>
         <textarea
-          className="textarea textarea-primary w-full"
+          className="text-white textarea textarea-primary w-full"
           placeholder="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+        />
+      </div>
+
+      <div className="form-control w-full max-w-xs">
+        <label className="label">
+          <span className="label-text text-black">ENS name</span>
+        </label>
+        <input
+          type="text"
+          placeholder="mytribe.eth"
+          className="text-white textarea textarea-primary w-full"
+          value={ensName}
+          onChange={(e) => setENSName(e.target.value)}
+        />
+      </div>
+
+      <div className="form-control w-full max-w-xs">
+        <label className="label">
+          <span className="label-text text-black">Declare your values</span>
+        </label>
+        <textarea
+          className="text-white textarea textarea-primary w-full"
+          placeholder="tribe values"
+          value={tribeValues}
+          onChange={(e) => setTribeValues(e.target.value)}
         />
       </div>
 
@@ -138,15 +262,31 @@ export default () => {
         />
       </div>
 
+      <select
+        className="select select-bordered select-xs w-full max-w-xs text-white"
+        value={network}
+        onChange={(e) => setNetwork(parseInt(e.target.value))}
+      >
+        <option disabled selected>
+          Network
+        </option>
+        {networkOptions.map((x) => (
+          <option key={x} value={(networkIds as any)[x]?.toString()}>
+            {x}
+          </option>
+        ))}
+      </select>
+
       {isActionInProgress ? (
-        <button className="btn" disabled>
-          <span className="loading loading-spinner text-black"></span>
-          loading
+        <button className="btn">
+          <span className="loading loading-spinner"></span>
+          {actionMessage || "loading"}
         </button>
       ) : (
         <button
           className="btn"
           onClick={(e: any) => {
+            console.log("onclick", { audioEnabled });
             onSubmit(e);
           }}
           disabled={isActionInProgress}
