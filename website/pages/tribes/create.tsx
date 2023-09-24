@@ -43,7 +43,8 @@ function waitForTx(txHash: string, provider: Provider) {
   return new Promise<void>((resolve, reject) => {
     provider.once(txHash, (transactionReceipt) => {
       console.log(
-        `Completed with ${transactionReceipt.confirmations} confirmations. `
+        `Completed with ${transactionReceipt.confirmations} confirmations. `,
+        { transactionReceipt }
       );
 
       resolve();
@@ -155,12 +156,9 @@ export default () => {
         }
 
         const { address: tribeAddress } = await res.json();
-        // await waitForTx(
-        //   (
-        //     await res.json()
-        //   ).txHash,
-        //   await connector!.getProvider()
-        // );
+
+        console.log({ tribeAddress });
+        await waitForTx(tribeAddress.hash, await connector!.getProvider());
 
         try {
           if (lastAudioRef.current) lastAudioRef.current.pause();
@@ -173,7 +171,7 @@ export default () => {
           }
         } catch (e) {}
 
-        router.push(`/tribes/${network}/${tribeAddress}}`);
+        // router.push(`/tribes/${network}/${tribeAddress}}`);
       }
     } catch (e: any) {
       console.error(e);
