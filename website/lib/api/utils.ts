@@ -46,20 +46,6 @@ export async function getProviders(chainId: number): Promise<Providers> {
     };
 }
 
-export function buildMockENSProfile(address: string, values: ValueReference[]): ENSProfile {
-    return {
-        values: values,
-        displayName: "Unknown " + address.substring(0, 4),
-        avatar: `/address/${address}/avatar`,
-        description: "We help companies by developing tailor-made blockchain solutions using top-notch technology.",
-        twitter: "Blockful_io",
-        email: "info@blockful.io",
-        website: "https://blockful.io",
-        github: "blockful-io",
-        telegram: "blockful_io"
-      };
-}
-
 export async function buildRealENSProfile(providers: Providers, address: string, viewerValues: ValueReference[]): Promise<ENSProfile> {
 
     const primaryName = await providers.ethers.lookupAddress(address);
@@ -110,20 +96,20 @@ export async function buildRealENSProfile(providers: Providers, address: string,
       };
 }
 
-export function buildMockTribeSummary(chainId: number, tribeAddress: string, displayName: string, owner: string, memberCount: number, values: ValueReference[]): TribeSummary {
+export async function buildMockTribeSummary(providers: Providers, tribeAddress: string, displayName: string, owner: string, memberCount: number, viewerValues: ValueReference[]): Promise<TribeSummary> {
     const tribeId : TribeReference = {
-      chainId: chainId,
+      chainId: providers.chainId,
       address: tribeAddress
     };
   
-    const ensProfile = buildMockENSProfile(tribeAddress, values);
+    const ensProfile = await buildRealENSProfile(providers, tribeAddress, viewerValues);
   
     return {
       tribeId: tribeId,
       displayName: displayName,
       owner: owner,
-      avatar: `/tribes/${chainId}/${tribeAddress}/avatar`,
-      badge: `/tribes/${chainId}/${tribeAddress}/badge`,
+      avatar: `/tribes/${providers.chainId}/${tribeAddress}/avatar`,
+      badge: `/tribes/${providers.chainId}/${tribeAddress}/badge`,
       memberCount: memberCount,
       ensProfile: ensProfile
     };

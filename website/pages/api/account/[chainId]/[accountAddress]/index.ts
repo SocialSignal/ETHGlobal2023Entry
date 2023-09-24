@@ -1,10 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { buildMockAccountSummary, buildMockTribeSummary, buildRealENSProfile, getProviders } from "../../../../../lib/api/utils";
-import { buildValueReferences } from "../../../../../lib/shared/utils";
+import { ErrorInfo, buildValueReferences } from "../../../../../lib/shared/utils";
 import { AccountDetail, AccountSummary, ValueReference } from "../../../../../types/types";
 
 // TODO: validation with zod
 type RequestData = {
+
+  chainId: number;
 
  /*
   * The account being requested.
@@ -31,10 +33,6 @@ type ResponseData = {
   account: AccountSummary | AccountDetail;
 }
 
-type ErrorInfo = {
-    error: string;
-};
-
 export default async function getAccount(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData | ErrorInfo>
@@ -57,6 +55,7 @@ export default async function getAccount(
   }
 
   const requestData: RequestData = {
+    chainId: chainId,
     address: accountAddress.toLowerCase(),
     summary: req.query.summary ? req.query.summary.toString().toLowerCase() === "true" : false,
     viewer: req.query.viewer ? req.query.viewer.toString() : null
@@ -72,7 +71,7 @@ export default async function getAccount(
     viewerValues = viewerProfile.values;
   }
 
-  const tribeSummary1 = buildMockTribeSummary(chainId, "0x283af0b28c62c092c9727f1ee09c02ca627eb7f5", "Tribe 1", "0xd8da6bf26964af9d7eed9e03e53415d37aa96045", 123, viewerValues);
+  const tribeSummary1 = await buildMockTribeSummary(providers, "0x283af0b28c62c092c9727f1ee09c02ca627eb7f5", "Tribe 1", "0xd8da6bf26964af9d7eed9e03e53415d37aa96045", 123, viewerValues);
   const accountSummary = await buildMockAccountSummary(providers, "0x1a199654959140e5c1a2f4135faa7ba2748939c5", tribeSummary1, viewerValues);
 
   let account: AccountSummary | AccountDetail;
@@ -83,8 +82,8 @@ export default async function getAccount(
 
   } else {
 
-    const tribeSummary2 = buildMockTribeSummary(
-        1,
+    const tribeSummary2 = await buildMockTribeSummary(
+        providers,
         "0x253553366da8546fc250f225fe3d25d0c782303b",
         "Tribe 2",
         "0x1a199654959140e5c1a2f4135faa7ba2748939c5",
@@ -92,8 +91,8 @@ export default async function getAccount(
         viewerValues
       );
 
-      const tribeSummary3 = buildMockTribeSummary(
-        1,
+      const tribeSummary3 = await buildMockTribeSummary(
+        providers,
         "0x253553366da8546fc250f225fe3d25d0c782303b",
         "Tribe 3",
         "0x1a199654959140e5c1a2f4135faa7ba2748939c5",
@@ -101,8 +100,8 @@ export default async function getAccount(
         viewerValues
       );
 
-      const tribeSummary4 = buildMockTribeSummary(
-        1,
+      const tribeSummary4 = await buildMockTribeSummary(
+        providers,
         "0x253553366da8546fc250f225fe3d25d0c782303b",
         "Tribe 4",
         "0x1a199654959140e5c1a2f4135faa7ba2748939c5",
@@ -110,8 +109,8 @@ export default async function getAccount(
         viewerValues
       );
 
-      const tribeSummary5 = buildMockTribeSummary(
-        1,
+      const tribeSummary5 = await buildMockTribeSummary(
+        providers,
         "0x253553366da8546fc250f225fe3d25d0c782303b",
         "Tribe 5",
         "0x1a199654959140e5c1a2f4135faa7ba2748939c5",
