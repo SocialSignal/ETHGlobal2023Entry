@@ -93,10 +93,10 @@ export async function createTribe(
 
     // Send transaction
 
-    let tribeAddress;
-    contract.on("TribeFounded", (arg1, event) => { 
-      tribeAddress = arg1;
-  });
+    const tribeAddress = new Promise((resolve) => {contract.on("TribeFounded", (arg1, event) => { 
+      console.log('asjaj', {arg1});
+      resolve(arg1);
+    })});
 
     const tx: ContractTransaction = await contract.createTribe(
       owner,
@@ -104,12 +104,8 @@ export async function createTribe(
       ensName
     );
 
-    while (tribeAddress === undefined) {
-      await new Promise(r => setTimeout(r, 1000));
-    }
-
     // Wait for the transaction to be mined
-    return { tx, tribeAddress };
+    return { tx, tribeAddress: await tribeAddress };
   } catch (error) {
     console.error("Error in createTribe:", error);
     throw error;

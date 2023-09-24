@@ -47,6 +47,7 @@ function waitForTx(txHash: string, provider: any) {
 }
 
 export default () => {
+  const router = useRouter();
   const [audioEnabled] = useAtom(sfxAtom);
   const [actionMessage, setActionMessage] = useState<string>();
 
@@ -148,10 +149,9 @@ export default () => {
           );
         }
 
-        const { address: tribeAddress } = await res.json();
+        const { tribeAddress } = await res.json();
 
-        console.log({ tribeAddress });
-        await waitForTx(tribeAddress.hash, await connector!.getProvider());
+        // await waitForTx(tribeAddress.hash, await connector!.getProvider());
 
         try {
           if (lastAudioRef.current) lastAudioRef.current.pause();
@@ -164,7 +164,7 @@ export default () => {
           }
         } catch (e) {}
 
-        // router.push(`/tribes/${network}/${tribeAddress}}`);
+        router.push(`/tribes/${network}/${tribeAddress}}`);
       }
     } catch (e: any) {
       console.error(e);
