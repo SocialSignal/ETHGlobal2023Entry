@@ -47,6 +47,20 @@ export const Web3Inbox = () => {
     identityKey,
   } = useW3iAccount();
 
+  const { address } = useAccount({
+    onDisconnect: () => {
+      setAccount("");
+    },
+  });
+
+  const { signMessage } = useSignalSourceSignMessage();
+
+  // We need to set the account as soon as the user is connected
+  useEffect(() => {
+    if (!Boolean(address)) return;
+    setAccount(`eip155:1:${address}`);
+  }, [signMessage, address, setAccount]);
+
   const {
     subscribe,
     unsubscribe,
@@ -61,8 +75,6 @@ export const Web3Inbox = () => {
   const [lastBlock, setLastBlock] = useState<string>();
   const [isBlockNotificationEnabled, setIsBlockNotificationEnabled] =
     useState(true);
-
-  const { signMessage } = useSignalSourceSignMessage();
 
   const handleRegistration = useCallback(async () => {
     if (!account) return;
