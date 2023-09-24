@@ -105,7 +105,7 @@ export async function createTribe(
     );
 
     while (tribeAddress === undefined) {
-      await new Promise(r => setTimeout(r, 3000));
+      await new Promise(r => setTimeout(r, 1000));
     }
 
     // Wait for the transaction to be mined
