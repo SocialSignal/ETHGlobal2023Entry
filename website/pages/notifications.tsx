@@ -9,8 +9,14 @@ import {
 import { useEffect, useCallback } from "react";
 import { useSignMessage, useAccount } from "wagmi";
 
+const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
+const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN as string;
+
 export default () => {
-  const isReady = useInitWeb3InboxClient({ projectId: "..." });
+  const isReady = useInitWeb3InboxClient({
+    projectId,
+    domain: appDomain,
+  });
 
   const { address } = useAccount({
     onDisconnect: () => {
