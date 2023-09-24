@@ -36,6 +36,7 @@ createWeb3Modal({
   themeVariables: {
     "--w3m-font-family": "Roboto, sans-serif",
     "--w3m-accent": "#56B5BF",
+    "--w3m-z-index": 100,
   } as any,
 });
 
@@ -53,7 +54,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <div>
                   <Navbar />
                 </div>
-                <div className="p-10 z-10">
+                <div className="p-10 z-0">
                   <div className="flex flex-col justify-center items-center">
                     <Component {...pageProps} />
                   </div>
