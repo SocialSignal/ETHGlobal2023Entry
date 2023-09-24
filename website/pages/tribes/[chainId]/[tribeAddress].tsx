@@ -193,7 +193,7 @@ export default () => {
               />
             </div>
             <div>
-              description:{" "}
+              {" "}
               {tribeData?.ensProfile?.description ||
                 "Guardians of our beautiful earth"}
             </div>
