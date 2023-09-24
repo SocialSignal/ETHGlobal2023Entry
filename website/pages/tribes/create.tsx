@@ -9,6 +9,7 @@ import { useTribeENSRepair } from "../../components/hooks/useTribeENSRepair";
 import { zeroAddress } from "viem";
 
 const networkIds = {
+  goerli: 5,
   gnosis: 100,
   arbitrum: 42161,
   scroll: 534352,
@@ -22,6 +23,7 @@ const networkIds = {
 };
 
 const networkOptions = [
+  "goerli",
   "gnosis",
   "arbitrum",
   "scroll",
@@ -53,6 +55,7 @@ export default () => {
 
   const { address, connector } = useAccount();
 
+  console.log({ address });
   // const {provider} = useProvider();
   // const { data: primaryENS } = useEnsName({
   //   address,
@@ -114,7 +117,7 @@ export default () => {
 
       if (description) data.set("description", description);
       if (smallAvatar) data.set("smallAvatar", smallAvatar);
-      if (address) data.set("owner", address); // TODO make this mandatory
+      if (address) data.set("owner", address);
 
       setActionMessage("Uploading data");
       const res = await fetch("/api/tribes/create", {
@@ -164,7 +167,7 @@ export default () => {
           }
         } catch (e) {}
 
-        router.push(`/tribes/${network}/${tribeAddress}}`);
+        router.push(`/tribes/${network}/${tribeAddress}`);
       }
     } catch (e: any) {
       console.error(e);

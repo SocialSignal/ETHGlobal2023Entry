@@ -1,12 +1,13 @@
-import { ContractTransaction, ethers } from "ethers";
+import { Contract, ContractTransaction, ethers } from "ethers";
+import tribeAbi from "../abis/tribe-abi.json";
 
-export const chainConfig = {
-  5 : {
-    name: "goerli",
-    rpc: `https://goerli.infura.io/v3/${process.env.INFURA_KEY}`,
-    tribeFactoryABI: ""
-  }
-}
+// export const chainConfig = {
+//   5 : {
+//     name: "goerli",
+//     rpc: `https://goerli.infura.io/v3/${process.env.INFURA_KEY}`,
+//     tribeFactoryABI: ""
+//   }
+// }
 
 const tribeFactoryABI = [
   {
@@ -91,12 +92,20 @@ export async function createTribe(
       connectedWallet
     );
 
-    // Send transaction
+    const tribeAddress = new Promise((resolve) => {
+      contract.on("TribeFounded", async (arg1, event) => {
+        const receivedAddress = arg1;
+        const tribeContract = new Contract(receivedAddress, tribeAbi, provider);
 
-    const tribeAddress = new Promise((resolve) => {contract.on("TribeFounded", (arg1, event) => { 
-      console.log('asjaj', {arg1});
-      resolve(arg1);
-    })});
+        if (
+          (await tribeContract.owner()) === owner &&
+          (await tribeContract.tokenURI(0)) === baseURI
+        ) {
+          console.log("MATCHED", receivedAddress);
+          resolve(receivedAddress);
+        }
+      });
+    });
 
     const tx: ContractTransaction = await contract.createTribe(
       owner,
