@@ -1,15 +1,5 @@
-import {
-  AccountSummary,
-  ENSProfile,
-  LensProfile,
-  SocialStorySource,
-  SocialStorySummary,
-  TribeReference,
-  TribeSummary,
-  ValueReference,
-  XMTPProfile,
-} from "../../types/types";
-import { ethers } from "ethers";
+import { AccountSummary, ENSProfile, LensProfile, SocialStorySource, SocialStorySummary, TribeReference, TribeSummary, ValueReference, XMTPProfile } from "../../types/types";
+import { ethers } from 'ethers'
 import { buildValueReferences } from "../shared/utils";
 import { ens_normalize } from "@adraffy/ens-normalize";
 import { init as initAirstack, fetchQuery } from "@airstack/node";
@@ -67,12 +57,17 @@ export async function buildRealENSProfile(
   let displayName = null;
   let resolver = null;
   if (primaryName && primaryName === ens_normalize(primaryName)) {
-    avatar = `https://metadata.ens.domains/${providers.chainName}/avatar/${primaryName}`;
+    //avatar = `https://metadata.ens.domains/${providers.chainName}/avatar/${primaryName}`;
+    avatar = `https://source.boringavatars.com/beam/160/${address}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51`;
     displayName = primaryName;
     resolver = await providers.ethers.getResolver(primaryName);
   } else {
     avatar = `https://source.boringavatars.com/beam/160/${address}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51`;
     displayName = "Unknown " + address.substring(2, 6);
+  }
+
+  if (primaryName === "tribes.eth") {
+    avatar = `https://metadata.ens.domains/${providers.chainName}/avatar/${primaryName}`;
   }
 
   let values: ValueReference[] = [];
