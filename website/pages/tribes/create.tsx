@@ -6,7 +6,13 @@ import { sfxAtom } from "../../components/core/Navbar";
 import { useAtom } from "jotai";
 import { useAccount } from "wagmi";
 import { useTribeENSRepair } from "../../components/hooks/useTribeENSRepair";
-import { ZeroAddress } from "ethers";
+import {
+  Provider,
+  Signer,
+  Transaction,
+  TransactionReceipt,
+  ZeroAddress,
+} from "ethers";
 
 const networkIds = {
   gnosis: 100,
@@ -33,11 +39,26 @@ const networkOptions = [
   "polygon",
 ];
 
+function waitForTx(txHash: string, provider: Provider) {
+  return new Promise<void>((resolve, reject) => {
+    provider.once(txHash, (transactionReceipt) => {
+      console.log(
+        `Completed with ${transactionReceipt.confirmations} confirmations. `
+      );
+
+      resolve();
+    });
+  });
+}
+
 export default () => {
   const router = useRouter();
   const [audioEnabled] = useAtom(sfxAtom);
+  const [actionMessage, setActionMessage] = useState<string>();
 
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
+
+  // const {provider} = useProvider();
   // const { data: primaryENS } = useEnsName({
   //   address,
   // });
@@ -53,11 +74,11 @@ export default () => {
   const [largeAvatar, setLargeAvatar] = useState<File>();
   const [smallAvatar, setSmallAvatar] = useState<File>();
   const lastAudioRef = useRef<HTMLAudioElement>();
-  const { address } = useAccount();
 
   const { configureTribeRecords } = useTribeENSRepair();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    setActionMessage("");
     e.preventDefault();
     if (!largeAvatar) {
       toastError(audioEnabled, "Large avatar is required");
@@ -100,40 +121,60 @@ export default () => {
       if (smallAvatar) data.set("smallAvatar", smallAvatar);
       if (address) data.set("owner", address); // TODO make this mandatory
 
-      // const res = await fetch("/api/tribes/create", {
-      //   method: "POST",
-      //   body: data,
-      // });
+      setActionMessage("Uploading data");
+      const res = await fetch("/api/tribes/create", {
+        method: "POST",
+        body: data,
+      });
 
-      // if (!res.ok) {
-      //   toastError(audioEnabled, await res.text());
-      // } else {
-      await configureTribeRecords(ensName, {
-        displayName: name,
-        values: tribeValues?.split(",").map((x) => x.trim()),
-        description: description || "",
-        // largeAvatarIPFS,
-        tribeId: {
-          chainId: network,
-          // Get this from CreateTribe
-          address: ZeroAddress,
-        },
-        // smallAvatarIPFS,
-      } as any);
-
-      try {
-        if (lastAudioRef.current) lastAudioRef.current.pause();
-
-        if (audioEnabled) {
-          const sfx = new Audio("/sfx/tribe-create-succeed.mp3");
-          sfx.currentTime = 0;
-          sfx.volume = 1;
-          sfx.play();
+      if (!res.ok) {
+        toastError(
+          audioEnabled,
+          (await res.text()) || "Failed to create tribe"
+        );
+      } else {
+        try {
+          setActionMessage("Configuring ENS");
+          await configureTribeRecords(ensName, {
+            displayName: name,
+            values: tribeValues?.split(",").map((x) => x.trim()),
+            description: description || "",
+            // largeAvatarIPFS,
+            tribeId: {
+              chainId: network,
+              // Get this from CreateTribe
+              address: ZeroAddress,
+            },
+            // smallAvatarIPFS,
+          } as any);
+        } catch (e) {
+          toastError(
+            audioEnabled,
+            "Failed to set ENS records. Tribe was created, but please try to repair ENS later."
+          );
         }
-      } catch (e) {}
 
-      // router.push(res.url);
-      // }
+        const { address: tribeAddress } = await res.json();
+        // await waitForTx(
+        //   (
+        //     await res.json()
+        //   ).txHash,
+        //   await connector!.getProvider()
+        // );
+
+        try {
+          if (lastAudioRef.current) lastAudioRef.current.pause();
+
+          if (audioEnabled) {
+            const sfx = new Audio("/sfx/tribe-create-succeed.mp3");
+            sfx.currentTime = 0;
+            sfx.volume = 1;
+            sfx.play();
+          }
+        } catch (e) {}
+
+        router.push(`/tribes/${network}/${tribeAddress}}`);
+      }
     } catch (e: any) {
       console.error(e);
     } finally {
@@ -246,14 +287,15 @@ export default () => {
       </select>
 
       {isActionInProgress ? (
-        <button className="btn" disabled>
-          <span className="loading loading-spinner text-black"></span>
-          loading
+        <button className="btn">
+          <span className="loading loading-spinner"></span>
+          {actionMessage || "loading"}
         </button>
       ) : (
         <button
           className="btn"
           onClick={(e: any) => {
+            console.log("onclick", { audioEnabled });
             onSubmit(e);
           }}
           disabled={isActionInProgress}

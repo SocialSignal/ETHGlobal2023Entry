@@ -12,6 +12,7 @@ import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { SkeletonTheme } from "react-loading-skeleton";
 import AuthWrapper from "../components/AuthWrapper";
+import { goerli } from "viem/chains";
 
 // 1. Get projectID at https://cloud.walletconnect.com
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
@@ -20,7 +21,7 @@ if (!projectId) {
 }
 
 // 2. Configure Web3Modal
-const chains = [mainnet];
+const chains = [goerli];
 const wagmiConfig = defaultWagmiConfig({
   chains,
   projectId,
