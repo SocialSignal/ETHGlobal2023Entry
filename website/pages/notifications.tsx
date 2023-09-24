@@ -5,7 +5,7 @@ import {
   useW3iAccount,
   useInitWeb3InboxClient,
   useMessages,
-} from "@web3inbox/react-widget";
+} from "@web3inbox/widget-react";
 import { useEffect, useCallback } from "react";
 import { useSignMessage, useAccount } from "wagmi";
 
@@ -43,7 +43,7 @@ export default () => {
   const handleRegistration = useCallback(async () => {
     if (!account) return;
     try {
-      await registerIdentity(signMessageAsync);
+      await registerIdentity(signMessageAsync as any);
     } catch (registerIdentityError) {
       console.error({ registerIdentityError });
     }

@@ -2242,7 +2242,7 @@
 
 "@web3inbox/core@*", "@web3inbox/core@^0.0.14":
   version "0.0.14"
-  resolved "https://registry.npmjs.org/@web3inbox/core/-/core-0.0.14.tgz"
+  resolved "https://registry.npmjs.org/@web3inbox/core/-/core-0.0.14.tgz#801b056ee17efe5fae28e9a94e421ee3f8696942"
   integrity sha512-+Si4ojnXiwyby6N7qKgwQSBIn0GdPISXRSo8l6vWMDOBPkroyqp9IgDzmJSps/T/zYd0GkHUfBjhrIJkqkLaQA==
   dependencies:
     "@walletconnect/core" "2.10.1-665f0a23"
@@ -2252,7 +2252,7 @@
 
 "@web3inbox/widget-react@^0.6.18":
   version "0.6.18"
-  resolved "https://registry.npmjs.org/@web3inbox/widget-react/-/widget-react-0.6.18.tgz"
+  resolved "https://registry.npmjs.org/@web3inbox/widget-react/-/widget-react-0.6.18.tgz#b23df701f5718cfd63a0a79e95cb7c8a5cc76959"
   integrity sha512-+dyugCjEAPv18+RWhMfM5DNJNL0a2aEYzHaf60GI07qVo59g7UxWbcsjAmH2h4voXgm6ML7RTwb2WxP8GZnuPA==
   dependencies:
     "@web3inbox/core" "*"
