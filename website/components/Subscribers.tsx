@@ -34,7 +34,7 @@ function Subscribers() {
                   caip10Account.split("eip155:1:")[1]
                 }`}
                 // target="_blank"
-                // key={caip10Account}
+                key={caip10Account}
                 // status="info"
                 // rounded="xl"
                 // gap={2}

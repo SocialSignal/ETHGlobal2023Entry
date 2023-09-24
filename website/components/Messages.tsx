@@ -17,12 +17,11 @@ function Messages() {
           messages
             .sort((a, b) => b.id - a.id)
             .map(({ id, message }) => (
-              <div>
+              <div key={id}>
                 <a
                   //   as={Link}
                   href={message.url}
                   target="_blank"
-                  key={id}
                   //   status="info"
                   //   colorScheme={
                   //     message.type === "transactional" ? "blue" : "purple"
