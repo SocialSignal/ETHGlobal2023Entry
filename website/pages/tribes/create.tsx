@@ -4,6 +4,22 @@ import { useRef, useState } from "react";
 import { toastError } from "../../components/Notifications";
 import { sfxAtom } from "../../components/core/Navbar";
 import { useAtom } from "jotai";
+import { useAccount, useEnsName } from "wagmi";
+import { useTribeENSRepair } from "../../components/hooks/useTribeENSRepair";
+import { ZeroAddress } from "ethers";
+
+const networkIds = {
+  gnosis: 100,
+  arbitrum: 42161,
+  scroll: 534352,
+  base: 8453,
+  mantle: 5000,
+  celo: 42220,
+  linea: 59144,
+  neonevm: 1,
+  polygon: 137,
+  zkSync: 324,
+};
 
 const networkOptions = [
   "gnosis",
@@ -21,15 +37,24 @@ export default () => {
   const router = useRouter();
   const [audioEnabled] = useAtom(sfxAtom);
 
+  const { address } = useAccount();
+  // const { data: primaryENS } = useEnsName({
+  //   address,
+  // });
+
+  // console.log({ address, primaryENS });
+
   const [isActionInProgress, setIsActionInProgress] = useState(false);
   const [name, setName] = useState<string>();
-  const [network, setNetwork] = useState<string>();
+  const [network, setNetwork] = useState<number>();
   const [description, setDescription] = useState<string>();
   const [ensName, setENSName] = useState<string>();
   const [tribeValues, setTribeValues] = useState<string>();
   const [largeAvatar, setLargeAvatar] = useState<File>();
   const [smallAvatar, setSmallAvatar] = useState<File>();
   const lastAudioRef = useRef<HTMLAudioElement>();
+
+  const { configureTribeRecords } = useTribeENSRepair();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,7 +64,7 @@ export default () => {
     } else if (!name?.trim().length) {
       toastError(audioEnabled, "Name is required");
       return;
-    } else if (!network?.trim().length) {
+    } else if (!network) {
       toastError(audioEnabled, "Network is required");
       return;
     } else if (!ensName?.trim().length) {
@@ -66,34 +91,47 @@ export default () => {
       const data = new FormData();
       data.set("largeAvatar", largeAvatar);
       data.set("name", name);
-      data.set("network", network);
+      data.set("chainId", network.toString());
       data.set("ensName", ensName);
       data.set("tribeValues", tribeValues);
 
       if (description) data.set("description", description);
       if (smallAvatar) data.set("smallAvatar", smallAvatar);
 
-      const res = await fetch("/api/tribes/create", {
-        method: "POST",
-        body: data,
-      });
+      // const res = await fetch("/api/tribes/create", {
+      //   method: "POST",
+      //   body: data,
+      // });
 
-      if (!res.ok) {
-        toastError(audioEnabled, await res.text());
-      } else {
-        try {
-          if (lastAudioRef.current) lastAudioRef.current.pause();
+      // if (!res.ok) {
+      //   toastError(audioEnabled, await res.text());
+      // } else {
+      await configureTribeRecords(ensName, {
+        displayName: name,
+        values: tribeValues?.split(",").map((x) => x.trim()),
+        description: description || "",
+        // largeAvatarIPFS,
+        tribeId: {
+          chainId: network,
+          // Get this from CreateTribe
+          address: ZeroAddress,
+        },
+        // smallAvatarIPFS,
+      } as any);
 
-          if (audioEnabled) {
-            const sfx = new Audio("/sfx/tribe-create-succeed.mp3");
-            sfx.currentTime = 0;
-            sfx.volume = 1;
-            sfx.play();
-          }
-        } catch (e) {}
+      try {
+        if (lastAudioRef.current) lastAudioRef.current.pause();
 
-        router.push(res.url);
-      }
+        if (audioEnabled) {
+          const sfx = new Audio("/sfx/tribe-create-succeed.mp3");
+          sfx.currentTime = 0;
+          sfx.volume = 1;
+          sfx.play();
+        }
+      } catch (e) {}
+
+      // router.push(res.url);
+      // }
     } catch (e: any) {
       console.error(e);
     } finally {
@@ -118,7 +156,7 @@ export default () => {
         <input
           type="text"
           placeholder="tribe name"
-          className="input input-bordered input-primary w-full max-w-xs"
+          className="text-white input input-bordered input-primary w-full max-w-xs"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -131,7 +169,7 @@ export default () => {
           </span>
         </label>
         <textarea
-          className="textarea textarea-primary w-full"
+          className="text-white textarea textarea-primary w-full"
           placeholder="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -144,8 +182,8 @@ export default () => {
         </label>
         <input
           type="text"
-          placeholder="ENS name"
-          className="textarea textarea-primary w-full"
+          placeholder="mytribe.eth"
+          className="text-white textarea textarea-primary w-full"
           value={ensName}
           onChange={(e) => setENSName(e.target.value)}
         />
@@ -156,7 +194,7 @@ export default () => {
           <span className="label-text text-black">Declare your values</span>
         </label>
         <textarea
-          className="textarea textarea-primary w-full"
+          className="text-white textarea textarea-primary w-full"
           placeholder="tribe values"
           value={tribeValues}
           onChange={(e) => setTribeValues(e.target.value)}
@@ -193,13 +231,13 @@ export default () => {
       <select
         className="select select-bordered select-xs w-full max-w-xs text-white"
         value={network}
-        onChange={(e) => setNetwork(e.target.value)}
+        onChange={(e) => setNetwork(parseInt(e.target.value))}
       >
         <option disabled selected>
           Network
         </option>
         {networkOptions.map((x) => (
-          <option key={x} value={x}>
+          <option key={x} value={(networkIds as any)[x]?.toString()}>
             {x}
           </option>
         ))}

@@ -1,6 +1,5 @@
 import type { AppProps } from "next/app";
-import { WagmiConfig, useAccount } from "wagmi";
-import { goerli } from "wagmi/chains";
+import { WagmiConfig, mainnet } from "wagmi";
 import Footer from "../components/core/Footer";
 // import "@web3inbox/widget-react/dist/compiled.css";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -21,7 +20,7 @@ if (!projectId) {
 }
 
 // 2. Configure Web3Modal
-const chains = [goerli];
+const chains = [mainnet];
 const wagmiConfig = defaultWagmiConfig({
   chains,
   projectId,

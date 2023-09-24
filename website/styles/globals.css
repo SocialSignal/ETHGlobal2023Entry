@@ -7,6 +7,15 @@ body {
   background-color: #010101;
   min-height: 100vh;
   min-width: 100vw;
+  font-family: "Kanit", sans-serif;
+}
+
+.mooli {
+  font-family: "Mooli", sans-serif;
+}
+
+.roboto-condensed {
+  font-family: "Roboto Condensed", sans-serif;
 }
 
 .image_preview_container {
