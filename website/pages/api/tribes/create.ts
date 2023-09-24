@@ -76,7 +76,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // This is a hacky way to avoid dealing with formdata => file reading => pinning work
       // which is something that would have to get fixed for production readiness, but not
       // relevant to the value we're trying to deliver at the hackathon.
-      const tmpPath = `${uuidv4()}.json`;
+      const tmpPath = `/tmp/${uuidv4()}.json`;
       writeFileSync(tmpPath, JSON.stringify(contractMetadata));
       const contractMetadataCID = await pinFiles([tmpPath], ["metadata.json"]);
 
