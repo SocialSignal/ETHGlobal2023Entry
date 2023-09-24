@@ -60,7 +60,7 @@ export default async function getTribeDetail(
   const providers = await getProviders(chainId);
 
   const values = buildValueReferences("Web3, Decentralization, LOVE, Environment", null);
-  const tribeSummary = buildMockTribeSummary(1, "0x283af0b28c62c092c9727f1ee09c02ca627eb7f5", "Tribe 1", "0xd8da6bf26964af9d7eed9e03e53415d37aa96045", 123, values);
+  const tribeSummary = await buildMockTribeSummary(providers, "0x283af0b28c62c092c9727f1ee09c02ca627eb7f5", "Tribe 1", "0xd8da6bf26964af9d7eed9e03e53415d37aa96045", 123, values);
 
   const curatedSocial: SocialStorySummary[] = []
   const account1 = await buildMockAccountSummary(providers, "0x1a199654959140e5c1a2f4135faa7ba2748939c5", tribeSummary, values);

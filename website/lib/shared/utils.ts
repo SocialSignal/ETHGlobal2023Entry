@@ -53,3 +53,7 @@ export function buildValueReferences(rawValues: string, viewerValues: ValueRefer
       }
     });
   }
+
+export type ErrorInfo = {
+    error: string;
+};
