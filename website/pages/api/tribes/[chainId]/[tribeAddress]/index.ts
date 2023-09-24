@@ -59,16 +59,16 @@ export default async function getTribeDetail(
 
   const providers = await getProviders(chainId);
 
-  const values = buildValueReferences("Web3, Decentralization, LOVE, Environment", null);
-  const tribeSummary = await buildMockTribeSummary(providers, "0x283af0b28c62c092c9727f1ee09c02ca627eb7f5", "Tribe 1", "0xd8da6bf26964af9d7eed9e03e53415d37aa96045", 123, values);
+  const values = buildValueReferences("Recycle, Reduce, Reuse", null);
+  const tribeSummary = await buildMockTribeSummary(providers, "0xc71146cac9ee772ebb25a322ca9d2ddf34357d38", "Environmentals", "0xdff897d173498ad287890d5a15d77885de31a55f", 2, values);
 
   const curatedSocial: SocialStorySummary[] = []
-  const account1 = await buildMockAccountSummary(providers, "0x1a199654959140e5c1a2f4135faa7ba2748939c5", tribeSummary, values);
-  const account2 = await buildMockAccountSummary(providers, "0x76a6d08b82034b397e7e09dae4377c18f132bbb8", null, values);
-  const account3 = await buildMockAccountSummary(providers, "0xfe89cc7abb2c4183683ab71653c4cdc9b02d44b7", null, values);
-  const account4 = await buildMockAccountSummary(providers, "0x0364c42a15c2cc3073eba1e11ee5ab0c6a1b5b40", null, values);
-  const account5 = await buildMockAccountSummary(providers, "0xa9350e3b4ad3f22bab136cfef999c132ead3bca3", null, values);
-  const account6 = await buildMockAccountSummary(providers, "0xfa45c6991a2c3d74ada3a279e21135133ce3da8a", null, values);
+  const account1 = await buildMockAccountSummary(providers, "0x2a4FC9c5EC629D872f82D29faE5DFa71B39b7E28", tribeSummary, values);
+  const account2 = await buildMockAccountSummary(providers, "0x7e2F4252cF4a87bAbce5a162648BB37ECbE3bE4C", null, values);
+  const account3 = await buildMockAccountSummary(providers, "0x195a4b5A35D0729394D5603deB9AAb941eC1e7ec", null, values);
+  const account4 = await buildMockAccountSummary(providers, "0x43D407E1CAf17aE64eCd360aaAEb7229B7ADD49d", null, values);
+  const account5 = await buildMockAccountSummary(providers, "0xE4a0e05cb060A0423d14C7878af6980DD0EAA014", null, values);
+  const account6 = await buildMockAccountSummary(providers, "0x63bF83c11c50627F44119336A3c2f616b7c65228", null, values);
 
   const tribe: TribeDetail = {
     ...tribeSummary,
